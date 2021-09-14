@@ -97,7 +97,7 @@ class ACTDS:
     def Comparison_function(y, y_B):
         return np.arctan((y-y_B))/np.pi*2
 
-
+https://github.com/Lyle0411/ACTDS/
 class ANFIS:
 
     def __init__(self, XY, *MR, seed=int(time())):
