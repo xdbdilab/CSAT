@@ -3,7 +3,7 @@ import random
 from time import time
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-
+from sympy import *
 
 # Configuration_Name: Interpretation
 
@@ -23,7 +23,7 @@ class ACTDS:
             MR[i] = self.anfis.x2MR(self.X[i])
         self.anfis.MR = self.anfis.Update_MR(MR)
 
-        self.anfis.ANFIS(Train_index=np.array(range(len(self.XY))), epoch=50)
+        self.anfis.ANFIS(Train_index=np.array(range(len(self.XY))), epoch=10)
         self.X_p = self.anfis.Perceive(self.X)
 
     def Comperators_1(self):
@@ -62,8 +62,16 @@ class ACTDS:
         mu_y = np.dot(v.transpose(), self.w)
         sigma_y = np.dot(np.dot(v.transpose(), self.Sigma_w), v) + self.sigma ** 2
 
-        return norm.cdf(mu_y / np.sqrt(sigma_y))
+        return float(norm.cdf(mu_y / np.sqrt(sigma_y)))
 
+    def Compare_1_o(self, o, o_B):
+        v = self.Interactive(o, o_B)
+
+        # Distribution parameter
+        mu_y = np.dot(v.transpose(), self.w)
+        sigma_y = np.dot(np.dot(v.transpose(), self.Sigma_w), v) + self.sigma ** 2
+
+        return float(norm.cdf(mu_y / np.sqrt(sigma_y)))
 
     def Comperators_2(self):
         # Logistic regression
@@ -72,6 +80,65 @@ class ACTDS:
     def Comperators_3(self):
         # Classification And Regression Tree
         X_p = self.X_p
+
+    def Generator(self, x_B, size = 1):
+        self.Generator_parameters(self.anfis.Perceive(np.matrix(x_B)))
+        m = self.anfis.MR.shape[0]
+        o = np.zeros(m)
+        for i in range(m):
+            o[i] = np.random.randn() * self.G_p[1][i] + self.G_p[0][i]
+
+        o = o/np.sum(o)
+        self.Decoder(o, x_B)
+
+    def Generator_parameters(self, o_B):
+        m = self.anfis.MR.shape[0]
+        # Full probability
+        Variable_space_size = np.sqrt(m) / np.math.factorial(m - 1)
+        Accumulative_value = 0
+        for i in range(50):
+            o = self.Sum2one(m)
+            Accumulative_value += self.Compare_1_o(o, o_B) * Variable_space_size
+        Full_P = Accumulative_value/(i+1)
+
+        # P_1
+        P_1 = np.zeros(m)
+        for k in range(m):
+            o = np.zeros(m)
+            o[k] = 1
+            P_1[k] = self.Compare_1_o(o, o_B)/Full_P
+
+        # P_0
+        P_0 = np.zeros(m)
+        Variable_space_size = np.sqrt(m - 1) / np.math.factorial(m - 2)
+        for k in range(m):
+            Accumulative_value = 0
+            for i in range(50):
+                o = np.zeros(m)
+                temp = self.Sum2one(m-1)
+                o[0:k] = temp[0:k]
+                o[k+1:] = temp[k:]
+                Accumulative_value += self.Compare_1_o(o, o_B) * Variable_space_size
+            P_0[k] = Accumulative_value/(i+1)
+        P_1, P_0 = P_1 / np.sum(P_1), P_0 / np.sum(P_0)
+
+        # Generator parameters
+        mu, sigma = np.zeros(m), np.zeros(m)
+        for k in range(m):
+            mu[k], sigma[k] = self.Gaussian_equation_solving(P_0[k], P_1[k])
+
+        self.G_p = [mu,sigma]
+
+    def Decoder(self, o, x_B):
+        m = self.anfis.MR.shape[0]
+        n = self.anfis.MR.shape[1]
+        nx = np.zeros(n)
+        for i in range(n):
+            nx[i] = x_B[i]
+            for j in range(m):
+                nx[i] += o[j]*(self.anfis.MR[j][i] - x_B[i])
+
+        print(np.round(nx))
 
     @staticmethod
     def Interactive(x, x_B):
@@ -97,7 +164,38 @@ class ACTDS:
     def Comparison_function(y, y_B):
         return np.arctan((y-y_B))/np.pi*2
 
-https://github.com/Lyle0411/ACTDS/
+    @staticmethod
+    def Sum2one(m):
+        r = np.abs(np.random.randn(m))**1.34
+        r = r/np.sqrt(np.sum(r**2))
+        x = r/np.sum(r)
+        return x
+
+    @staticmethod
+    def Gaussian_equation_solving(P_0,P_1):
+        k = Symbol('k')
+        b = Symbol('b')
+        c = Symbol('c')
+        res = solve([(k * (0 + b)) ** 2 - (P_0 - c) ** 2, (k * (1 + b)) ** 2 - (P_1 - c) ** 2,
+                     (k ** 2 * b * (1 + b)) ** 2 - (
+                                 ((c * (2 + 4 * b) - 2) ** 2 - (k * b ** 2) ** 2 - (k * (1 + b) ** 2) ** 2) / (
+                                     2 * b * (1 + b))) ** 2], [k, b, c])
+
+        k = res[-1][0]
+        b = res[-1][1]
+        c = res[-1][2]
+        x = Symbol('x')
+        mu = integrate(x * (-abs(k * (x + b)) + c), (x, 0, 1))
+        sigma2 = integrate((x - mu) ** 2 * (-abs(k * (x + b)) + c), (x, 0, 1))
+
+        if mu < 0:
+            mu = 0
+        if mu > 1:
+            mu = 1
+        if sigma2 < 0:
+            sigma2 = np.exp(float(sigma2))
+
+        return float(mu), np.sqrt(float(sigma2))
 class ANFIS:
 
     def __init__(self, XY, *MR, seed=int(time())):
@@ -152,11 +250,11 @@ class ANFIS:
         O_1 = np.copy(self.F)
         O_2 = np.exp(np.dot(bMR.transpose(), np.log(O_1 + 0.0001)))
         O_3 = O_2 / np.dot(np.ones([O_2.shape[0], O_2.shape[0]]), O_2)
-        O_4 = np.multiply(
-            np.dot(self.Ac.transpose(), np.append(Test_X, np.ones([Test_X.shape[0], 1]), axis=1).transpose())
-            , O_3)
+        # O_4 = np.multiply(
+        #     np.dot(self.Ac.transpose(), np.append(Test_X, np.ones([Test_X.shape[0], 1]), axis=1).transpose())
+        #     , O_3)
 
-        return O_4
+        return O_3
 
     def prediction(self, Test_X):
         self.mFun(Test_X)
@@ -441,3 +539,35 @@ class ANFIS:
         Rest_index = np.delete(Available_index_set, Train_index_pos)
 
         return Val_index, Train_index, Rest_indexx
+class SAMPLER:
+    def __init__(self, lb = 0, ub = 1, pool = -1, Score_fun = np.sin, epsilon = 0.01):
+        self.lb = lb
+        self.ub = ub
+        self.fun = Score_fun
+        self.epsilon = epsilon
+        self.pool = pool
+        if pool == -1:
+            self.Pool()
+        else:
+            self.pool = pool
+
+        self.Score()
+
+    def Pool(self):
+        self.pool = np.random.random(size = 100)*(self.ub - self.lb) + self.lb
+
+    def Score(self):
+        self.score = np.copy(self.pool)
+        for i in range(len(self.pool)):
+            self.score[i] = self.fun(self.pool[i])
+            if self.score[i] <= self.epsilon:
+                self.score[i] = self.epsilon
+
+
+    def rands(self, size = 1):
+        xita = np.random.random(size)
+        cum = np.cumsum(self.score)/np.sum(self.score)
+        xita = np.matrix(xita)
+        cum = np.matrix(cum)
+        Q = 1/np.log(np.dot(np.exp(cum).T, np.exp(-1*xita)))
+        return self.pool[np.argmax(Q,axis=0)]
