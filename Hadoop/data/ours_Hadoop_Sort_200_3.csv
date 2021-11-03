@@ -1,0 +1,11 @@
+mapreduce_task_io_sort_factor,mapreduce_reduce_shuffle_merge_percent,mapreduce_output_fileoutputformat_compress,mapreduce_reduce_merge_inmem_threshold,mapreduce_job_reduces,mapreduce_map_sort_spill_percent,mapreduce_reduce_shuffle_input_buffer_percent,mapreduce_task_io_sort_mb,mapreduce_map_output_compress,PERF
+96,0.21,True,105,389,0.7419937082830914,0.1,260,False,1432
+17,0.3799491768439408,True,431,82,0.5984248228132636,0.4640662209919835,170,True,1385
+49,0.4263271804996406,True,14,695,0.5,0.1,102,True,1384
+100,0.21,False,10,1000,0.9,0.1,260,False,1384
+10,0.5244209988506803,True,823,88,0.5,0.8,100,True,1382
+100,0.8040192732460151,False,10,545,0.8423316383672406,0.6207139676813074,260,False,1382
+53,0.4043981200522993,True,10,859,0.5,0.1,100,True,1382
+46,0.4121747981200422,True,10,690,0.5,0.1,100,True,1382
+28,0.44520871426678177,True,38,70,0.7698961338488618,0.5031129754938242,162,True,1382
+10,0.381115057464336,True,669,119,0.5,0.5242737113229929,157,True,1382

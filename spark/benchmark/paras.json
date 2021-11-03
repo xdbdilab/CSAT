@@ -1,0 +1,97 @@
+{
+  "common_params": {
+      "white_list": [
+      ],
+      "performance": "throughput_max",
+      "black_list": [
+      ],
+      "all_params": {
+        "executorCores":["int",[1,4],1],
+        "executorMemory":["int",[1024,4096],1024],
+        "memoryFraction":["float",[0.1,0.9],0.6],
+        "memoryStorageFraction":["float",[0.1,0.9],0.6],
+        "defaultParallelism":["int",[1,12],2],
+        "shuffleCompress":["enum",["true","false"],"true"],
+        "shuffleSpillCompress":["enum",["true","false"],"true"],
+        "broadcastCompress":["enum",["true","false"],"true"],
+        "rddCompress":["enum",["true","false"],"true"],
+        "ioCompressionCodec": ["enum",["lz4","lzf","snappy"],"snappy"],
+        "reducerMaxSizeInFlight":["int",[8,96],48],
+        "shuffleFileBuffer":["int",[8,64],32],
+        "serializer":["enum",["org.apache.spark.serializer.JavaSerializer", "org.apache.spark.serializer.KryoSerializer"],"org.apache.spark.serializer.JavaSerializer"]
+
+      }
+  },
+  "config_params": {
+  },
+  "default_component_params":{
+
+  },
+  "select_all_component_params": {
+
+  },
+  "random_sample_component_params": {
+    "sample_num": 100
+  },
+  "random_tuning_component_params":{
+
+  },
+  "actgan_component_params":{
+    "LR_G": 0.0001,
+    "LR_D": 0.0001,
+    "N_IDEAS": 5,
+    "NumOfLine": 16,
+    "BATCH_SIZE": 32,
+    "Epoch":  150000
+  },
+  "bo_component_params": {
+    "sample_num": 80
+  },
+  "sensitivity_analysis_component_params": {
+    "alpha": 0.6,
+    "sobel_sample_number": 10,
+    "number_of_SA_iter": 2,
+    "model_n_iterations": 100
+  },
+  "space_search_component_params": {
+    "InitialSampleSetSize": 50,
+    "RRSMaxRounds": 2
+  },
+  "random_forest_component_params": {
+
+  },
+  "genetic_algorithm_component_params": {
+    "uniformRate": 0.5,
+    "mutationRate": 0.015,
+    "tournamentSize": 5,
+    "elitism": "True",
+    "Population_SIZE": 100,
+    "EPOCH": 100000
+  },
+  "lasso_select_component_params": {
+    "alpha": 3
+  },
+  "gaussian_process_component_params": {
+    "n_restarts_optimizer": 0,
+    "alpha": 1e-10,
+    "random_state": null
+  },
+  "random_search_component_params": {
+    "sample_num": 3000
+  },
+  "ddpg_component_params": {
+        "noisy": "True",
+        "batch_size": 16,
+        "epoches": 5,
+        "metric_num": 10,
+        "tau": 0.0001,
+        "alr": 0.00001,
+        "clr": 0.00001,
+        "model": "",
+        "gamma": 0.9,
+        "memory_size": 100000,
+        "memory": ""
+
+  }
+}
+

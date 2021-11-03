@@ -1,0 +1,1 @@
+{'audit_log_buffer_size': 18099329737523552256, 'audit_log_format': 'NEW', 'queries_performed_read': 49}

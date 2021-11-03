@@ -1,0 +1,6 @@
+pandas==0.20.3
+sobol_seq==0.2.0
+numpy==1.13.3
+scikit_learn==0.24.2
+requests==2.25.1
+

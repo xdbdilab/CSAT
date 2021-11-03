@@ -2,5 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/LLVM/llvm-project" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/LLVM/test-suite" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/x264" vcs="Git" />
   </component>
 </project>

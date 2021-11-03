@@ -1,0 +1,1 @@
+{'queries_performed_read': 273.93924496269426, 'paramList': {'audit_log_buffer_size': 60987.18847609751, 'audit_log_format': 'OLD', 'ddl-rewriter': 'ON'}}

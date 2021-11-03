@@ -1,0 +1,13 @@
+parameter,type,range
+profile,enum,baseline,main,high,high10,high422,high444
+qp,int,0,69
+bitrate,int,1500,5000
+crf,float,0,51
+rc-lookahead,int,40,250
+vbv-init,float,0,1
+qpmax,int,0,51
+ratetol,float,0,1
+ipratio,float,0,10000
+pbratio,float,0,10000
+aq-mode,int,0,2
+qcomp,float,0,1

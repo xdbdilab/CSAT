@@ -9,22 +9,64 @@ from sympy import *
 
 class ACTDS:
 
-    def __init__(self, XY):
+    def __init__(self, XY, bound = -1, int_flag = []):
         self.XY = np.array(XY)
+        for i in range(len(self.XY)):
+            self.XY[i, -1] = self.XY[i, -1] + random.random()*2 - 1
         self.X = self.XY[:, 0:-1]
         self.Y = self.XY[:, -1]
+
+        if len(int_flag) == 0:
+            self.int_flag = np.ones(self.X.shape[1])
+        else:
+            self.int_flag = int_flag
+
+        if bound == -1:
+            bound = np.array([[]])
+            for i in range(len(self.X)):
+                bound = np.append(bound, [np.array([0, 10000])], axis = 1)
+            self.bound = bound
+        else:
+            self.bound = np.array(bound)
+
+        self.Lock_value_mask()
         self.anfis = ANFIS(XY)
         self.Perceive()
         self.Comperators_1()
 
     def Perceive(self):
-        MR = np.zeros(self.X.shape)
-        for i in range(len(self.XY)):
-            MR[i] = self.anfis.x2MR(self.X[i])
+        # Initial distribution number
+        Initial_distribution_number = 2
+        Dominance_distribution_number = 4
+        MR = np.zeros((np.min([self.X.shape[0], Initial_distribution_number]), self.X.shape[1]))
+        pos = list(range(len(self.XY)))
+        random.shuffle(pos)
+        for i in range(len(MR)):
+            MR[i] = self.anfis.x2MR(self.X[pos[i]])
+        # MR[MR.shape[0]-1] = self.anfis.x2MR(self.X[np.argmax(self.Y)])
+
+        XY = ANFIS.Union(self.XY)
+        X = XY[np.argsort(-XY[:, -1])[0:Dominance_distribution_number], 0:-1]
+        for i in range(len(X)):
+            MR = np.append(MR, [self.anfis.x2MR(X[i])], axis = 0)
+
         self.anfis.MR = self.anfis.Update_MR(MR)
 
-        self.anfis.ANFIS(Train_index=np.array(range(len(self.XY))), epoch=10)
-        self.X_p = self.anfis.Perceive(self.X)
+        self.anfis.ANFIS(Train_index=np.array(range(len(self.XY))), epoch=50)
+        self.X_p = self.anfis.Perceive(self.X).transpose()
+
+    def Lock_value_mask(self):
+        self.mask = np.ones(self.X.shape[1])*-233
+        b = []
+        for i in range(len(self.mask)):
+            if len(np.unique(self.X[:, i])) == 1:
+                self.mask[i] = self.X[0, i]
+                b.append(i)
+
+
+        self.X = np.delete(self.X, b, axis = 1)
+        self.XY = np.delete(self.XY, b, axis = 1)
+        self.int_flag = np.delete(self.int_flag, b, axis=0)
 
     def Comperators_1(self):
         # Linear regression
@@ -81,64 +123,98 @@ class ACTDS:
         # Classification And Regression Tree
         X_p = self.X_p
 
-    def Generator(self, x_B, size = 1):
-        self.Generator_parameters(self.anfis.Perceive(np.matrix(x_B)))
-        m = self.anfis.MR.shape[0]
-        o = np.zeros(m)
-        for i in range(m):
-            o[i] = np.random.randn() * self.G_p[1][i] + self.G_p[0][i]
+    def Recommended_fix(self, nx):
+        bound = self.bound
+        for i in range(len(nx)):
+            for j in range(len(nx[i])):
+                if nx[i][j] >= bound[j, 1]:
+                    nx[i][j] = bound[j, 1]
+                elif nx[i][j] <= bound[j, 0]:
+                    nx[i][j] = bound[j, 0]
 
-        o = o/np.sum(o)
-        self.Decoder(o, x_B)
+        return nx
 
     def Generator_parameters(self, o_B):
-        m = self.anfis.MR.shape[0]
+        m, n = self.anfis.MR.shape
+
         # Full probability
         Variable_space_size = np.sqrt(m) / np.math.factorial(m - 1)
         Accumulative_value = 0
+
         for i in range(50):
             o = self.Sum2one(m)
             Accumulative_value += self.Compare_1_o(o, o_B) * Variable_space_size
-        Full_P = Accumulative_value/(i+1)
+        Full_P = Accumulative_value / (i + 1)
 
         # P_1
         P_1 = np.zeros(m)
         for k in range(m):
             o = np.zeros(m)
             o[k] = 1
-            P_1[k] = self.Compare_1_o(o, o_B)/Full_P
+            P_1[k] = self.Compare_1_o(o, o_B) / Full_P
 
         # P_0
         P_0 = np.zeros(m)
-        Variable_space_size = np.sqrt(m - 1) / np.math.factorial(m - 2)
+        Variable_space_size = np.sqrt(m - 1) / np.math.factorial(np.max([2, m]) - 2)
         for k in range(m):
             Accumulative_value = 0
             for i in range(50):
                 o = np.zeros(m)
-                temp = self.Sum2one(m-1)
+                temp = self.Sum2one(m - 1)
                 o[0:k] = temp[0:k]
-                o[k+1:] = temp[k:]
+                o[k + 1:] = temp[k:]
                 Accumulative_value += self.Compare_1_o(o, o_B) * Variable_space_size
-            P_0[k] = Accumulative_value/(i+1)
+            P_0[k] = Accumulative_value / (i + 1)
+
         P_1, P_0 = P_1 / np.sum(P_1), P_0 / np.sum(P_0)
+        P_1[np.where(P_1 <= 0.001)] = 0.001
+        P_0[np.where(P_0 <= 0.001)] = 0.001
 
         # Generator parameters
         mu, sigma = np.zeros(m), np.zeros(m)
         for k in range(m):
             mu[k], sigma[k] = self.Gaussian_equation_solving(P_0[k], P_1[k])
 
-        self.G_p = [mu,sigma]
+        self.G_p = [mu, sigma]
+
+    def Generator(self, x_B, size = 1):
+        self.Generator_parameters(self.anfis.Perceive(np.matrix(x_B)))
+        m = self.anfis.MR.shape[0]
+        o = np.zeros((size, m))
+        for i in range(m):
+            o[:, i] = np.random.randn(size) * self.G_p[1][i] + self.G_p[0][i]
+        # for i in range(size):
+        #     o[i] = o[i]/np.sum(o[i])
+
+        return self.Decoder(o, x_B)
 
     def Decoder(self, o, x_B):
         m = self.anfis.MR.shape[0]
         n = self.anfis.MR.shape[1]
-        nx = np.zeros(n)
-        for i in range(n):
-            nx[i] = x_B[i]
-            for j in range(m):
-                nx[i] += o[j]*(self.anfis.MR[j][i] - x_B[i])
+        s = o.shape[0]
+        nx = np.zeros((s,n))
 
-        print(np.round(nx))
+        for i in range(n):
+            nx[:, i] = x_B[i]
+            for j in range(m):
+                delta = o[:, j]*(self.anfis.mf[i].mf[int(self.anfis.MR[j][i])].config[1] - x_B[i] + (random.random()-0.5)*x_B[i]*0.4)
+                nx[:, i] += delta
+
+
+        for i in range(n):
+            if self.int_flag[i] == 1:
+                nx[:, i] = np.round(nx[:, i])
+
+        # Recommended fix (for bound)
+        nx = self.Recommended_fix(nx)
+        xx = np.zeros((nx.shape[0], len(self.mask)))
+        t = 0
+        for i in range(len(self.mask)):
+            if self.mask[i] == -233:
+                xx[:,i] = nx[:,t]
+                t += 1
+
+        return xx
 
     @staticmethod
     def Interactive(x, x_B):
@@ -181,17 +257,21 @@ class ACTDS:
                                  ((c * (2 + 4 * b) - 2) ** 2 - (k * b ** 2) ** 2 - (k * (1 + b) ** 2) ** 2) / (
                                      2 * b * (1 + b))) ** 2], [k, b, c])
 
-        k = res[-1][0]
-        b = res[-1][1]
-        c = res[-1][2]
+        # print(res)
+        if len(res) == 0:
+            res = [(1,1,1)]
+        k = np.real(complex(res[-1][0]))
+        b = np.real(complex(res[-1][1]))
+        c = np.real(complex(res[-1][2]))
         x = Symbol('x')
+
         mu = integrate(x * (-abs(k * (x + b)) + c), (x, 0, 1))
+
+
         sigma2 = integrate((x - mu) ** 2 * (-abs(k * (x + b)) + c), (x, 0, 1))
 
         if mu < 0:
-            mu = 0
-        if mu > 1:
-            mu = 1
+            mu = -1
         if sigma2 < 0:
             sigma2 = np.exp(float(sigma2))
 
@@ -203,6 +283,7 @@ class ANFIS:
         random.seed(seed)
         if len(MR) > 0:
             self.MR = np.array(MR[0])
+
         else:
             self.MR = np.array([])
         self.XY = np.array(XY)
@@ -254,7 +335,7 @@ class ANFIS:
         #     np.dot(self.Ac.transpose(), np.append(Test_X, np.ones([Test_X.shape[0], 1]), axis=1).transpose())
         #     , O_3)
 
-        return O_3
+        return O_2
 
     def prediction(self, Test_X):
         self.mFun(Test_X)
@@ -462,7 +543,7 @@ class ANFIS:
             self.mf.append(MF())
             for j in range(len(self.CluRe.C[i])):
                 type = 'gaussmf'
-                config = [np.sqrt((self.CluRe.C[i][1] - self.CluRe.C[i][0]) / 10) / np.abs(CC[i]), self.CluRe.C[i][j]]
+                config = [np.sqrt((self.CluRe.C[i][1] - self.CluRe.C[i][0])/0.01) / np.abs(CC[i]), self.CluRe.C[i][j]]
                 self.mf[i].append(MUFUN(type, config))
 
     @classmethod
@@ -538,7 +619,7 @@ class ANFIS:
         Train_index = Available_index_set[Train_index_pos]
         Rest_index = np.delete(Available_index_set, Train_index_pos)
 
-        return Val_index, Train_index, Rest_indexx
+        return Val_index, Train_index, Rest_index
 class SAMPLER:
     def __init__(self, lb = 0, ub = 1, pool = -1, Score_fun = np.sin, epsilon = 0.01):
         self.lb = lb
@@ -562,7 +643,6 @@ class SAMPLER:
             self.score[i] = self.fun(self.pool[i])
             if self.score[i] <= self.epsilon:
                 self.score[i] = self.epsilon
-
 
     def rands(self, size = 1):
         xita = np.random.random(size)
