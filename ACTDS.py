@@ -1,3 +1,8 @@
+"""
+Created on August 1st 12:00:05 2021
+DPT main
+@author: Lyle
+"""
 import numpy as np
 import random
 from time import time
