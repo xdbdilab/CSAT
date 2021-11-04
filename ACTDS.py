@@ -189,7 +189,8 @@ class ACTDS:
         for i in range(m):
             o[:, i] = np.random.randn(size) * self.G_p[1][i] + self.G_p[0][i]
         for i in range(size):
-            o[i] = o[i]/np.sum(o[i])
+            if np.sum(o[i]) > 1:
+                o[i] = o[i]/np.sum(o[i])
 
         return self.Decoder(o, x_B)
 
@@ -204,7 +205,6 @@ class ACTDS:
             for j in range(m):
                 delta = o[:, j]*(self.anfis.mf[i].mf[int(self.anfis.MR[j][i])].config[1] - x_B[i] + (random.random()-0.5)*x_B[i]*0.4)
                 nx[:, i] += delta
-
 
         for i in range(n):
             if self.int_flag[i] == 1:

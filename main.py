@@ -26,8 +26,9 @@ from spark.benchmark.get_spark_Performance import get_performance as spark
 from sqlite.get_sqlite_Performance import get_performance as sqlite
 from sqlite.check_sqlite import config_fix as sqlite_fix
 from Hadoop.get_hadoop_performance import get_performance as Hadoop
+from apache.get_apache_performance import get_performance as apache
 
-SYSTEM = 'spark'# 系统名称(和文件名称保持统一）
+SYSTEM = 'Hadoop'# 系统名称(和文件名称保持统一）
 PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # 项目路径（绝对）
 
 def Measure(configuration, system = SYSTEM):
@@ -59,6 +60,12 @@ def Measure(configuration, system = SYSTEM):
         for i in range(len(configuration)):
             params[name_list[i]] = configuration[i]
         return Hadoop(params)
+    if system == 'apache':
+        name_list = ['StartServers', 'MinSpareServers', 'MaxSpareServers', 'MaxRequestWorkers', 'MaxRequestsPerChild']
+        params = {}
+        for i in range(len(configuration)):
+            params[name_list[i]] = configuration[i]
+        return apache(params)
 
 # 配置编码：系统侧->算法侧
 def Data_Preprocessing(X):
@@ -143,7 +150,7 @@ def output(timestruct):
     for i in range(len(name)):
         n_data[name[i]] = data[:, i]
     n_data = pd.DataFrame(n_data)
-    n_data.to_csv(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + "_wordcount_result.csv",
+    n_data.to_csv(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + "_Terasort_result.csv",
                   index=0)  # 输出结果文件名：时间+系统+后缀+result.csv
 
 
@@ -157,7 +164,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 60, syste
 
     # 需要修改的地方1 ####################################################################################################
     # 在列表中加入待实验的软件名
-    if system not in ['x264', 'Tomcat', 'spark', 'sqlite', 'Hadoop']:
+    if system not in ['x264', 'Tomcat', 'spark', 'sqlite', 'Hadoop', 'apache']:
         print('Can not do this: ' + system)
         return
 
@@ -249,6 +256,19 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 60, syste
         # CB
         bound = [[10, 100], [0.21, 0.9], [0, 1], [10, 1000], [1, 1000], [0.5, 0.9], [0.1, 0.8], [100, 260], [0, 1]]
         int_flag = np.array([1,0,1,1,1,0,0,1,1])
+
+    # apache
+    if system == 'apache':
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_apache_Recommended.csv", "a+",
+                     newline="")
+        content = csv.writer(file1)
+        content.writerow(
+            ['StartServers', 'MinSpareServers', 'MaxSpareServers', 'MaxRequestWorkers', 'MaxRequestsPerChild', 'PERF'])
+        file1.close()
+        # CB
+        bound = [[1, 10], [1, 10], [11, 20], [1, 1000], [0, 1000]]
+        int_flag = np.array(np.ones(5))
+
     ####################################################################################################################
 
 
