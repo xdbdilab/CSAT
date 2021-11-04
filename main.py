@@ -21,13 +21,13 @@ import time
 
 # 导入get_Performance
 import x264.main as x264
-from Tomcat.Tomcat_performance import getPerformance as Tomcat
+# from Tomcat.Tomcat_performance import getPerformance as Tomcat
 from spark.benchmark.get_spark_Performance import get_performance as spark
 from sqlite.get_sqlite_Performance import get_performance as sqlite
 from sqlite.check_sqlite import config_fix as sqlite_fix
 from Hadoop.get_hadoop_performance import get_performance as Hadoop
 
-SYSTEM = 'x264'# 系统名称(和文件名称保持统一）
+SYSTEM = 'spark'# 系统名称(和文件名称保持统一）
 PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # 项目路径（绝对）
 
 def Measure(configuration, system = SYSTEM):
@@ -37,7 +37,7 @@ def Measure(configuration, system = SYSTEM):
         no_8x8dct,no_cabac,no_deblock,no_fast_pskip,no_mbtree,no_mixed_refs,no_weightb,rc_lookahead,ref = configuration
         return x264.X264.getPerformance(no_8x8dct,no_cabac,no_deblock,no_fast_pskip,no_mbtree,no_mixed_refs,no_weightb,rc_lookahead,ref)
     if system == 'Tomcat':
-        return Tomcat(config = configuration)
+        return "UNDONE!"
     if system == 'spark':
         name_list = ['executorCores', 'executorMemory', 'memoryFraction',
                      'memoryStorageFraction', 'defaultParallelism', 'shuffleCompress',
@@ -119,7 +119,8 @@ def Translation(configuration, Processed_Flag, Map):
 # 数据文件更新（每完成一组推荐[10次]存储一次）
 def Data_file_update(XY, Processed_Flag, Map, timestruct):
 
-    file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + "_Recommended.csv", "a+", newline="")
+    file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + "_Recommended.csv", "a+",
+                 newline="")
     content = csv.writer(file1)
     for i in range(len(XY)):
         xy = Translation(XY[i], Processed_Flag, Map)
@@ -132,7 +133,8 @@ def output(timestruct):
     name = list(data)
     data = np.array(data)
     # print(data)
-    data = ANFIS.Union(data)
+    if SYSTEM in ['x264', 'sqlite', 'apache']:
+        data = ANFIS.Union(data)
     data = data[np.argsort(-data[:, -1])[0:np.min([10, len(data)])]]
     print('Recommended performance & configuration:')
     for member in data:
@@ -141,7 +143,9 @@ def output(timestruct):
     for i in range(len(name)):
         n_data[name[i]] = data[:, i]
     n_data = pd.DataFrame(n_data)
-    n_data.to_csv(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + "_Sort_result.csv", index=0) #输出结果文件名：时间+系统+后缀+result.csv
+    n_data.to_csv(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + "_wordcount_result.csv",
+                  index=0)  # 输出结果文件名：时间+系统+后缀+result.csv
+
 
 # 实验主体，参数依此为：搜索次数、推荐个数（每次）、初始采样集大小、系统名称
 def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 60, system = SYSTEM):
