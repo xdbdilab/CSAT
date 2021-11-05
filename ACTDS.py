@@ -340,7 +340,7 @@ class ANFIS:
         #     np.dot(self.Ac.transpose(), np.append(Test_X, np.ones([Test_X.shape[0], 1]), axis=1).transpose())
         #     , O_3)
 
-        return O_2
+        return O_3
 
     def prediction(self, Test_X):
         self.mFun(Test_X)

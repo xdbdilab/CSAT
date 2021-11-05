@@ -20,6 +20,7 @@ import time
 # 函数：get_Performance：输入配置，输出性能
 
 # 导入get_Performance
+from Test.get_Test_Performance import get_performance as test_fun
 import x264.main as x264
 # from Tomcat.Tomcat_performance import getPerformance as Tomcat
 from spark.benchmark.get_spark_Performance import get_performance as spark
@@ -35,6 +36,8 @@ WORKLOAD = '_Terasort'
 def Measure(configuration, system = SYSTEM):
     # 需要修改的地方0 ####################################################################################################
     # 输入为配置（列表）输出为性能值
+    if system == 'Test':
+        return test_fun(configuration)
     if system == 'x264':
         no_8x8dct,no_cabac,no_deblock,no_fast_pskip,no_mbtree,no_mixed_refs,no_weightb,rc_lookahead,ref = configuration
         return x264.X264.getPerformance(no_8x8dct,no_cabac,no_deblock,no_fast_pskip,no_mbtree,no_mixed_refs,no_weightb,rc_lookahead,ref)
@@ -156,7 +159,7 @@ def output(timestruct):
 
 
 # 实验主体，参数依此为：搜索次数、推荐个数（每次）、初始采样集大小、系统名称
-def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 60, system = SYSTEM):
+def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, system = SYSTEM):
 
 
     # Timestruct
@@ -165,7 +168,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 60, syste
 
     # 需要修改的地方1 ####################################################################################################
     # 在列表中加入待实验的软件名
-    if system not in ['x264', 'Tomcat', 'spark', 'sqlite', 'Hadoop', 'apache']:
+    if system not in ['Test', 'x264', 'Tomcat', 'spark', 'sqlite', 'Hadoop', 'apache']:
         print('Can not do this: ' + system)
         return
 
@@ -175,6 +178,19 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 60, syste
     # 配置名列表（包含性能PERF）
     # bound（闭区间，包含上下界）
     # int_flag（根据配置顺序指明是否为整形，枚举，布尔，整数都算整形
+
+    # Test
+    if system == 'Test':
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_Test_Recommended.csv", "a+",
+                     newline="")
+        content = csv.writer(file1)
+        content.writerow(
+            ['x1', 'x2', 'PERF'])
+        file1.close()
+
+        # CB
+        bound = [[0, 2*np.pi], [0, 2*np.pi]]
+        int_flag = np.array([0,0])
 
     # x264
     if system == 'x264':
@@ -321,7 +337,8 @@ if __name__ == '__main__':
     # {100,200,300}*3
     # Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50)
     # Hadoop_Terasort Now
-    for i in range(1,4):
+    # Test()
+    for i in range(2,4):
         print('ours-100-', i, ':')
         Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
     for i in range(1,4):
