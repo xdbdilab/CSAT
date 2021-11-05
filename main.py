@@ -30,6 +30,7 @@ from apache.get_apache_performance import get_performance as apache
 
 SYSTEM = 'Hadoop'# 系统名称(和文件名称保持统一）
 PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # 项目路径（绝对）
+WORKLOAD = '_Terasort'
 
 def Measure(configuration, system = SYSTEM):
     # 需要修改的地方0 ####################################################################################################
@@ -126,7 +127,7 @@ def Translation(configuration, Processed_Flag, Map):
 # 数据文件更新（每完成一组推荐[10次]存储一次）
 def Data_file_update(XY, Processed_Flag, Map, timestruct):
 
-    file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + "_Recommended.csv", "a+",
+    file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + WORKLOAD + "_Recommended.csv", "a+",
                  newline="")
     content = csv.writer(file1)
     for i in range(len(XY)):
@@ -136,7 +137,7 @@ def Data_file_update(XY, Processed_Flag, Map, timestruct):
 
 # 输出优化结果（推荐的[10个]配置组合及对应性能）
 def output(timestruct):
-    data = pd.read_csv(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + "_Recommended.csv")
+    data = pd.read_csv(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + WORKLOAD + "_Recommended.csv")
     name = list(data)
     data = np.array(data)
     # print(data)
@@ -150,7 +151,7 @@ def output(timestruct):
     for i in range(len(name)):
         n_data[name[i]] = data[:, i]
     n_data = pd.DataFrame(n_data)
-    n_data.to_csv(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + "_Terasort_result.csv",
+    n_data.to_csv(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + WORKLOAD + "_result.csv",
                   index=0)  # 输出结果文件名：时间+系统+后缀+result.csv
 
 
@@ -208,7 +209,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 60, syste
 
     # spark
     if system == 'spark':
-        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_spark_Recommended.csv", "a+",
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_spark" + WORKLOAD + "_Recommended.csv", "a+",
                      newline="")
         content = csv.writer(file1)
         content.writerow(['executorCores', 'executorMemory', 'memoryFraction',
@@ -243,7 +244,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 60, syste
 
     # Hadoop
     if system == 'Hadoop':
-        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_Hadoop_Recommended.csv", "a+",
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_Hadoop" + WORKLOAD + "_Recommended.csv", "a+",
                      newline="")
         content = csv.writer(file1)
         content.writerow(
@@ -273,7 +274,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 60, syste
 
 
     #Sample
-    data = pd.Series.tolist(pd.read_csv(PATH + system + ".csv"))# 输入文件名调整（可能包含负载后缀）
+    data = pd.Series.tolist(pd.read_csv(PATH + system + WORKLOAD + ".csv"))
     data, Processed_Flag, Map = Data_Preprocessing(np.array(data))
     XY = data[random.sample(list(range(len(data))), Initial_size)]
 
@@ -319,6 +320,7 @@ if __name__ == '__main__':
 
     # {100,200,300}*3
     # Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50)
+    # Hadoop_Terasort Now
     for i in range(1,4):
         print('ours-100-', i, ':')
         Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
