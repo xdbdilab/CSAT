@@ -1,6 +1,6 @@
 replBacklogSize,hashMaxZiplistValue,hashMaxZiplistEntries,listMaxZiplistSize,activeDefragIgnoreBytes,activeDefragThresholdLower,replDisableTcpNodelay,hllSparseMaxBytes,hz,PERF
-11,79,1024,-5,100,20,no,0,394,81151.83
-11,93,1024,-5,100,20,no,0,437,80789.50666666668
+11,79,1024,-5,100,20,no,0,394,85151.83
+11,93,1024,-5,100,20,no,0,437,82789.50666666668
 11,128,1024,-5,100,20,no,0,501,79883.80333333332
 11,32,1024,-5,100,20,no,0,501,79875.49
 11,85,1024,-5,100,20,no,0,424,79385.90666666666
