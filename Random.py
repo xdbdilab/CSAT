@@ -1,12 +1,13 @@
 from spark.benchmark.get_spark_Performance import get_performance as spark
 from Hadoop.get_hadoop_performance import get_performance as Hadoop
+from redis.get_redis_Performance import get_3Times as redis
 import csv
 import random
 import numpy as np
 from tqdm import trange
 import time
 
-PATH = 'Hadoop/'
+PATH = 'redis/'
 def Random_spark(size = 100, tag = 1):
 
     params = {}
@@ -101,12 +102,48 @@ def Random_Hadoop(size = 100, tag = 1):
         print([pref], list(params.values()))
         file1.close()
 
+def Random_redis(size = 100, tag = 1):
+    params = {}
+    timestamp = time.time()
+    timestruct = time.localtime(timestamp)
+    file1 = open(
+        PATH + 'data/' + "random_redis_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+                                                                                                      timestruct) + ".csv",
+        "a+", newline="")
+    content = csv.writer(file1)
+
+    # title
+    name_list = ['replBacklogSize', 'hashMaxZiplistValue', 'hashMaxZiplistEntries', 'listMaxZiplistSize',
+                 'activeDefragIgnoreBytes', 'activeDefragThresholdLower', 'replDisableTcpNodelay', 'hllSparseMaxBytes',
+                 'hz', 'PERF']
+    content.writerow(name_list)
+    file1.close()
+
+    for _ in trange(size):
+        file1 = open(PATH + 'data/' + "random_redis_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+                                                                                                      timestruct) + ".csv",
+                     "a+", newline="")
+        content = csv.writer(file1)
+        params[name_list[0]] = random.randint(1, 11)
+        params[name_list[1]] = random.randint(32, 128)
+        params[name_list[2]] = random.randint(256, 1024)
+        params[name_list[3]] = random.randint(-5, -1)
+        params[name_list[4]] = random.randint(100, 300)
+        params[name_list[5]] = random.randint(5, 20)
+        params[name_list[6]] = random.sample(["yes", "no"], 1)[0]
+        params[name_list[7]] = random.randint(0, 5000)
+        params[name_list[8]] = random.randint(1, 501)
+
+        pref = redis(params)
+        content.writerow(np.append(list(params.values()), pref))
+        print([pref], list(params.values()))
+        file1.close()
+
 if __name__ == "__main__":
 
-    # for i in range(1,4):
-    #     Random_Hadoop(size = 100, tag = i)
-    # for i in range(1,4):
-    #     Random_Hadoop(size = 200, tag = i)
-    Random_Hadoop(size=88, tag=3)
     for i in range(1,4):
-        Random_Hadoop(size = 300, tag = i)
+        Random_redis(size = 100, tag = i)
+    for i in range(1,4):
+        Random_redis(size = 200, tag = i)
+    for i in range(1,4):
+        Random_redis(size = 300, tag = i)

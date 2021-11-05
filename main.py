@@ -28,10 +28,11 @@ from sqlite.get_sqlite_Performance import get_performance as sqlite
 from sqlite.check_sqlite import config_fix as sqlite_fix
 from Hadoop.get_hadoop_performance import get_performance as Hadoop
 from apache.get_apache_performance import get_performance as apache
+from redis.get_redis_Performance import get_3Times as redis
 
-SYSTEM = 'Hadoop'# 系统名称(和文件名称保持统一）
+SYSTEM = 'redis'# 系统名称(和文件名称保持统一）
 PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # 项目路径（绝对）
-WORKLOAD = '_Terasort'
+WORKLOAD = ''
 
 def Measure(configuration, system = SYSTEM):
     # 需要修改的地方0 ####################################################################################################
@@ -70,6 +71,14 @@ def Measure(configuration, system = SYSTEM):
         for i in range(len(configuration)):
             params[name_list[i]] = configuration[i]
         return apache(params)
+    if system == 'redis':
+        name_list = ['replBacklogSize', 'hashMaxZiplistValue', 'hashMaxZiplistEntries', 'listMaxZiplistSize',
+                 'activeDefragIgnoreBytes', 'activeDefragThresholdLower', 'replDisableTcpNodelay', 'hllSparseMaxBytes',
+                 'hz']
+        params = {}
+        for i in range(len(configuration)):
+            params[name_list[i]] = configuration[i]
+        return redis(params)
 
 # 配置编码：系统侧->算法侧
 def Data_Preprocessing(X):
@@ -127,7 +136,7 @@ def Translation(configuration, Processed_Flag, Map):
 
     return new_configuration
 
-# 数据文件更新（每完成一组推荐[10次]存储一次）
+# 数据文件更新（每完成一组推荐[5次]存储一次）
 def Data_file_update(XY, Processed_Flag, Map, timestruct):
 
     file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + WORKLOAD + "_Recommended.csv", "a+",
@@ -157,7 +166,6 @@ def output(timestruct):
     n_data.to_csv(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + WORKLOAD + "_result.csv",
                   index=0)  # 输出结果文件名：时间+系统+后缀+result.csv
 
-
 # 实验主体，参数依此为：搜索次数、推荐个数（每次）、初始采样集大小、系统名称
 def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, system = SYSTEM):
 
@@ -168,7 +176,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
     # 需要修改的地方1 ####################################################################################################
     # 在列表中加入待实验的软件名
-    if system not in ['Test', 'x264', 'Tomcat', 'spark', 'sqlite', 'Hadoop', 'apache']:
+    if system not in ['Test', 'x264', 'Tomcat', 'spark', 'sqlite', 'Hadoop', 'apache', 'redis']:
         print('Can not do this: ' + system)
         return
 
@@ -286,6 +294,21 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
         bound = [[1, 10], [1, 10], [11, 20], [1, 1000], [0, 1000]]
         int_flag = np.array(np.ones(5))
 
+    # redis
+    if system == 'redis':
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_redis_Recommended.csv", "a+",
+                     newline="")
+        content = csv.writer(file1)
+        content.writerow(
+            ['replBacklogSize', 'hashMaxZiplistValue', 'hashMaxZiplistEntries', 'listMaxZiplistSize',
+             'activeDefragIgnoreBytes', 'activeDefragThresholdLower', 'replDisableTcpNodelay', 'hllSparseMaxBytes',
+             'hz', 'PERF'])
+        file1.close()
+        # CB
+        bound = [[1, 11], [32, 128], [256, 1024], [-5, -1], [100, 300], [5, 20], [0, 1], [0, 5000], [1, 501]]
+        int_flag = np.array(np.ones(9))
+
+
     ####################################################################################################################
 
 
@@ -331,14 +354,13 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
     output(timestruct)
 
-
 if __name__ == '__main__':
 
     # {100,200,300}*3
     # Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50)
-    # Hadoop_Terasort Now
+    # redis Now
     # Test()
-    for i in range(2,4):
+    for i in range(1,4):
         print('ours-100-', i, ':')
         Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
     for i in range(1,4):

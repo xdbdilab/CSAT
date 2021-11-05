@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 
-PATH = 'Hadoop/data/'
-Alg = 'random'
-sys = 'Hadoop_Terasort'
+PATH = 'redis/data/'
+Alg = 'ours'
+sys = 'redis'
 
 for j in range(1,4):
     log = np.zeros(3)
