@@ -189,8 +189,7 @@ class ACTDS:
         for i in range(m):
             o[:, i] = np.random.randn(size) * self.G_p[1][i] + self.G_p[0][i]
         for i in range(size):
-            if np.sum(o[i]) > 1:
-                o[i] = o[i]/np.sum(o[i])
+            o[i] = o[i]/np.sum(o[i])
 
         return self.Decoder(o, x_B)
 
