@@ -30,9 +30,9 @@ from Hadoop.get_hadoop_performance import get_performance as Hadoop
 from apache.get_apache_performance import get_performance as apache
 from redis.get_redis_Performance import get_3Times as redis
 
-SYSTEM = 'Hadoop'# 系统名称(和文件名称保持统一）
+SYSTEM = 'Test'# 系统名称(和文件名称保持统一）
 PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # 项目路径（绝对）
-WORKLOAD = '_Terasort'
+WORKLOAD = ''
 
 def Measure(configuration, system = SYSTEM):
     # 需要修改的地方0 ####################################################################################################
@@ -368,7 +368,7 @@ if __name__ == '__main__':
         Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
     for i in range(1,4):
         print('ours-300-', i, ':')
-        Test(Times_Constraint=290, Recommended_Number=5, Initial_size=150)
+        Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)
 
     # Test
     # configuration = [0, 200, 10, 1, 30, 1, 1, 2, 1, 2, 2, 50]

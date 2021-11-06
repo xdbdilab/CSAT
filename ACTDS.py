@@ -41,8 +41,8 @@ class ACTDS:
 
     def Perceive(self):
         # Initial distribution number
-        Initial_distribution_number = 2
-        Dominance_distribution_number = 4
+        Initial_distribution_number = 0
+        Dominance_distribution_number = 6
         MR = np.zeros((np.min([self.X.shape[0], Initial_distribution_number]), self.X.shape[1]))
         pos = list(range(len(self.XY)))
         random.shuffle(pos)
