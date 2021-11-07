@@ -20,8 +20,8 @@ def get_performance(params):
     # http://118.190.159.150:8019/experiment/hadoopTerasort Terasort
     # http://118.190.159.150:8019/experiment/hadoopWordcount Wordcount
     # http://118.190.159.150:8019/experiment/hadoopSort Sort
-    req = request.Request('http://118.190.159.150:8019/experiment/hadoopTerasort?%s' % value, headers=headers)  # 这样就能把参数带过去了
-    print('http://118.190.159.150:8019/experiment/hadoopTerasort?%s' % value)
+    req = request.Request('http://118.190.159.150:8019/experiment/hadoopWordcount?%s' % value, headers=headers)  # 这样就能把参数带过去了
+    print('http://118.190.159.150:8019/experiment/hadoopWordcount?%s' % value)
     # 下面是获得响应
     i = 0
 

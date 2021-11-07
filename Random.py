@@ -68,7 +68,7 @@ def Random_Hadoop(size = 100, tag = 1):
     timestamp = time.time()
     timestruct = time.localtime(timestamp)
     file1 = open(
-        PATH + 'data/' + "random_Hadoop_Terasort_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+        PATH + 'data/' + "random_Hadoop_Wordcount_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
                                                                                                       timestruct) + ".csv",
         "a+", newline="")
     content = csv.writer(file1)
@@ -83,7 +83,7 @@ def Random_Hadoop(size = 100, tag = 1):
     file1.close()
 
     for _ in trange(size):
-        file1 = open(PATH + 'data/' + "random_Hadoop_Terasort_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+        file1 = open(PATH + 'data/' + "random_Hadoop_Wordcount_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
                                                                                                       timestruct) + ".csv",
                      "a+", newline="")
         content = csv.writer(file1)
@@ -142,8 +142,8 @@ def Random_redis(size = 100, tag = 1):
 if __name__ == "__main__":
 
     for i in range(1,4):
-        Random_redis(size = 100, tag = i)
+        Random_Hadoop(size = 100, tag = i)
     for i in range(1,4):
-        Random_redis(size = 200, tag = i)
+        Random_Hadoop(size = 200, tag = i)
     for i in range(1,4):
-        Random_redis(size = 300, tag = i)
+        Random_Hadoop(size = 300, tag = i)
