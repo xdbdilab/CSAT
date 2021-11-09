@@ -7,13 +7,13 @@ import numpy as np
 from tqdm import trange
 import time
 
-PATH = 'redis/'
+PATH = 'Hadoop/'
 def Random_spark(size = 100, tag = 1):
 
     params = {}
     timestamp = time.time()
     timestruct = time.localtime(timestamp)
-    file1 = open(PATH + 'data/' + "random_spark_" + str(size) + "_" + str(tag) + "_wordcount_" + time.strftime('%Y%m%d%H%M%S',
+    file1 = open(PATH + 'data/' + "random_spark_sort_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
                                                                                                      timestruct) + ".csv",
                  "a+", newline="")
     content = csv.writer(file1)
@@ -26,8 +26,8 @@ def Random_spark(size = 100, tag = 1):
     content.writerow(name_list)
     file1.close()
 
-    for times in trange(size):
-        file1 = open(PATH + 'data/' + "random_spark_" + str(size) + "_" + str(tag) + "_wordcount_" + time.strftime('%Y%m%d%H%M%S',
+    for _ in trange(size):
+        file1 = open(PATH + 'data/' + "random_spark_sort_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
                                                                                                          timestruct) + ".csv",
                      "a+", newline="")
         content = csv.writer(file1)
@@ -141,9 +141,10 @@ def Random_redis(size = 100, tag = 1):
 
 if __name__ == "__main__":
 
-    for i in range(1,4):
-        Random_Hadoop(size = 100, tag = i)
-    for i in range(1,4):
-        Random_Hadoop(size = 200, tag = i)
-    for i in range(1,4):
-        Random_Hadoop(size = 300, tag = i)
+    # for i in range(1,4):
+    #     Random_Hadoop(size = 100, tag = i)
+    # for i in range(1,4):
+    #     Random_Hadoop(size = 200, tag = i)
+    # for i in range(1,4):
+    #     Random_Hadoop(size = 300, tag = i)
+    Random_Hadoop(size=222, tag=3)
