@@ -35,8 +35,8 @@ PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # Project path (absolute path)
 WORKLOAD = '_Wordcount'
 
 def Measure(configuration, system = SYSTEM):
-    # 需要修改的地方0 ####################################################################################################
-    # 输入为配置（列表）输出为性能值
+    # Need to modify 0 #################################################################################################
+    # Input is configuration (list) and output is performance value
     if system == 'Test':
         return test_fun(configuration)
     if system == 'x264':
@@ -205,13 +205,13 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
     timestamp = time.time()
     timestruct = time.localtime(timestamp)
 
-    # Need to modify 1 ####################################################################################################
+    # Need to modify 1 #################################################################################################
     # Add the name of the system to be tested in the list
     if system not in ['Test', 'x264', 'Tomcat', 'spark', 'sqlite', 'Hadoop', 'apache', 'redis']:
         print('Can not do this: ' + system)
         return
 
-    # Need to modify 2 ####################################################################################################
+    # Need to modify 2 #################################################################################################
     # Overall format reference Test
     # file name
     # List of configuration names (including performance PERF)
