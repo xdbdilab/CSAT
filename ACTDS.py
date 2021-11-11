@@ -124,6 +124,25 @@ class ACTDS:
         # Logistic regression
         X_p = self.X_p
 
+        # Data processing
+        V = []
+        U = []
+        for i in range(len(X_p)):
+            for j in range(len(X_p)):
+
+                u = self.Comparison_function(self.Y[i], self.Y[j])
+                if u == 0:
+                    continue
+                elif u > 0:
+                    V = np.append(V, self.Interactive(X_p[i], X_p[j]))
+                    U = np.append(U, 1)
+                else:
+                    V = np.append(V, self.Interactive(X_p[i], X_p[j]))
+                    U = np.append(U, 0)
+        self.V = V.reshape([len(X_p) * len(X_p) - len(X_p), len(self.Interactive(X_p[0], X_p[0]))])
+        self.U = U.reshape([len(U), 1])
+
+
     def Comperators_3(self):
         # Classification And Regression Tree
         X_p = self.X_p

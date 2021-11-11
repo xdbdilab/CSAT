@@ -30,9 +30,9 @@ from Hadoop.get_hadoop_performance import get_performance as Hadoop
 from apache.get_apache_performance import get_performance as apache
 from redis.get_redis_Performance import get_3Times as redis
 
-SYSTEM = 'spark'# 系统名称(和文件名称保持统一）
-PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # 项目路径（绝对）
-WORKLOAD = '_sort'
+SYSTEM = 'Hadoop'# System name (same as file name)
+PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # Project path (absolute path)
+WORKLOAD = '_Wordcount'
 
 def Measure(configuration, system = SYSTEM):
     # 需要修改的地方0 ####################################################################################################
@@ -80,7 +80,7 @@ def Measure(configuration, system = SYSTEM):
             params[name_list[i]] = configuration[i]
         return redis(params)
 
-# 配置编码：系统侧->算法侧
+# Configuration coding: system side -> algorithm side
 def Data_Preprocessing(X):
     Processed_Flag = np.zeros(X.shape[1])
     Map = []
@@ -106,7 +106,7 @@ def Data_Preprocessing(X):
 
     return f_X, Processed_Flag, Map
 
-# 配置解码：算法侧->系统侧
+# Configuration decoding: algorithm side -> system side
 def Translation(configuration, Processed_Flag, Map):
     new_configuration = list(configuration)
     for i in range(len(configuration)):
@@ -119,7 +119,7 @@ def Translation(configuration, Processed_Flag, Map):
         if configuration[i] == -1:
             new_configuration[i] = -1
 
-    # 如果系统配置有特殊的内部约束，请在这里指明 ############################################################################
+    # If the system configuration has special internal constraints, please specify here ################################
     if SYSTEM == 'sqlite':
         new_configuration = sqlite_fix(new_configuration)
     if SYSTEM == 'Hadoop':
@@ -133,10 +133,40 @@ def Translation(configuration, Processed_Flag, Map):
             else:
                 new_configuration[8] = 'false'
 
+            if configuration[0] >= 100:
+                new_configuration[0] = 100
+            if configuration[0] <= 10:
+                new_configuration[0] = 10
+            if configuration[1] >= 0.9:
+                new_configuration[1] = 0.9
+            if configuration[1] <= 0.21:
+                new_configuration[1] = 0.21
+            if configuration[3] >= 1000:
+                new_configuration[3] = 1000
+            if configuration[3] <= 10:
+                new_configuration[3] = 10
+            if configuration[4] >= 1000:
+                new_configuration[4] = 1000
+            if configuration[4] <= 1:
+                new_configuration[4] = 1
+            if configuration[5] >= 0.9:
+                new_configuration[5] = 0.9
+            if configuration[5] <= 0.5:
+                new_configuration[5] = 0.5
+            if configuration[6] >= 0.8:
+                new_configuration[6] = 0.8
+            if configuration[6] <= 0.1:
+                new_configuration[6] = 0.1
+            if configuration[7] >= 260:
+                new_configuration[7] = 260
+            if configuration[7] <= 100:
+                new_configuration[7] = 100
+
+
 
     return new_configuration
 
-# 数据文件更新（每完成一组推荐[5次]存储一次）
+# Data file update (recommendation [5 times] for each completion of a set of storage once)
 def Data_file_update(XY, Processed_Flag, Map, timestruct):
 
     file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + WORKLOAD + "_Recommended.csv", "a+",
@@ -147,7 +177,7 @@ def Data_file_update(XY, Processed_Flag, Map, timestruct):
         content.writerow(xy)
     file1.close()
 
-# 输出优化结果（推荐的[10个]配置组合及对应性能）
+# Output optimization results (recommended [10] configuration and corresponding performance)
 def output(timestruct):
     data = pd.read_csv(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + WORKLOAD + "_Recommended.csv")
     name = list(data)
@@ -164,9 +194,10 @@ def output(timestruct):
         n_data[name[i]] = data[:, i]
     n_data = pd.DataFrame(n_data)
     n_data.to_csv(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + '_' + SYSTEM + WORKLOAD + "_result.csv",
-                  index=0)  # 输出结果文件名：时间+系统+后缀+result.csv
+                  index=0)  # Output result file name: Time+system+workload+result.csv
 
-# 实验主体，参数依此为：搜索次数、推荐个数（每次）、初始采样集大小、系统名称
+# Subject of the experiment, the parameters are as follows:
+# constraint of searches, number of recommendations (each time), initial sampling set size, system name
 def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, system = SYSTEM):
 
 
@@ -174,18 +205,19 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
     timestamp = time.time()
     timestruct = time.localtime(timestamp)
 
-    # 需要修改的地方1 ####################################################################################################
-    # 在列表中加入待实验的软件名
+    # Need to modify 1 ####################################################################################################
+    # Add the name of the system to be tested in the list
     if system not in ['Test', 'x264', 'Tomcat', 'spark', 'sqlite', 'Hadoop', 'apache', 'redis']:
         print('Can not do this: ' + system)
         return
 
-    # 需要修改的地方2 ####################################################################################################
-    # 整体格式参考x264
-    # 文件名
-    # 配置名列表（包含性能PERF）
-    # bound（闭区间，包含上下界）
-    # int_flag（根据配置顺序指明是否为整形，枚举，布尔，整数都算整形
+    # Need to modify 2 ####################################################################################################
+    # Overall format reference Test
+    # file name
+    # List of configuration names (including performance PERF)
+    # bound (Closed interval, including upper and lower bounds)
+    # int_flag (According to the configuration order, indicate whether it is an integer,
+    # enumeration, boolean, and integer are all considered as integers
 
     # Test
     if system == 'Test':
@@ -358,14 +390,14 @@ if __name__ == '__main__':
 
     # {100,200,300}*3
     # Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50)
-    # redis Now
-    # Test()
-    for i in range(2,4):
-        print('ours-100-', i, ':')
-        Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
-    for i in range(1,4):
-        print('ours-200-', i, ':')
-        Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
+    # Hadoop_Wordcount Now
+
+    # for i in range(1,4):
+    #     print('ours-100-', i, ':')
+    #     Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
+    # for i in range(1,4):
+    #     print('ours-200-', i, ':')
+    #     Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
     for i in range(1,4):
         print('ours-300-', i, ':')
         Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)

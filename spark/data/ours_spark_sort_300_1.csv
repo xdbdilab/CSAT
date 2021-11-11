@@ -1,0 +1,11 @@
+executorCores,executorMemory,memoryFraction,memoryStorageFraction,defaultParallelism,shuffleCompress,shuffleSpillCompress,broadcastCompress,rddCompress,ioCompressionCodec,reducerMaxSizeInFlight,shuffleFileBuffer,serializer,PERF
+4,1229,0.5472975498141506,0.6851348474339256,7,False,True,True,True,lz4,11,10,org.apache.spark.serializer.JavaSerializer,3387
+4,1024,0.9,0.1,12,False,True,True,False,snappy,8,8,org.apache.spark.serializer.JavaSerializer,3228
+4,4096,0.9,0.9,12,True,False,True,False,lz4,8,8,org.apache.spark.serializer.JavaSerializer,3211
+3,1093,0.4415939244637506,0.8839479971317007,1,False,False,False,True,lzf,10,9,org.apache.spark.serializer.JavaSerializer,3200
+3,1091,0.4713151495268855,0.8627319315605719,1,False,False,False,True,lzf,10,9,org.apache.spark.serializer.JavaSerializer,3171
+4,1307,0.4236773317023331,0.7569841827770042,6,False,True,True,True,lz4,14,8,org.apache.spark.serializer.JavaSerializer,3163
+1,4096,0.1,0.9,1,True,False,False,True,lzf,8,45,org.apache.spark.serializer.JavaSerializer,3159
+4,1664,0.9,0.4661131657159038,12,True,True,True,False,lz4,9,8,org.apache.spark.serializer.JavaSerializer,3157
+4,1024,0.9,0.1,12,False,True,True,False,lz4,96,8,org.apache.spark.serializer.JavaSerializer,3147
+1,3797,0.1,0.9,1,True,False,False,True,lz4,8,29,org.apache.spark.serializer.JavaSerializer,3131

@@ -67,19 +67,19 @@ def get_performance(params):
     return (float)(data)
 if __name__ == "__main__":
     # Test
-    params = {'spark.executor.cores': int(1),
-              'spark.executor.memory': int(1024),
-              'spark.memory.fraction': float(0.6),
-              'spark.memory.storageFraction': float(0.6),
-              'spark.default.parallelism': int(2),
-              'spark.shuffle.compress': "true",
-              'spark.shuffle.spill.compress': "true",
-              'spark.broadcast.compress': "true",
-              'spark.rdd.compress': "true",
-              'spark.io.compression.codec': "snappy",
-              'spark.reducer.maxSizeInFlight': int(48),
-              'spark.shuffle.file.buffer': int(32),
-              'spark.serializer': "org.apache.spark.serializer.JavaSerializer"}
+    params = {'executorCores': int(1),
+              'executorMemory': int(1024),
+              'memoryFraction': float(0.6),
+              'memoryStorageFraction': float(0.6),
+              'defaultParallelism': int(2),
+              'shuffleCompress': "true",
+              'shuffleSpillCompress': "true",
+              'broadcastCompress': "true",
+              'rddCompress': "true",
+              'ioCompressionCodec': "snappy",
+              'reducerMaxSizeInFlight': int(48),
+              'shuffleFileBuffer': int(32),
+              'serializer': "org.apache.spark.serializer.JavaSerializer"}
     print(get_performance(params))
     # "executorCores": ["int", [1, 4], 1],
     # "executorMemory": ["int", [1024, 4096], 1024],

@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 
-PATH = 'spark/data/'
-Alg = 'random'
-sys = 'spark_sort'
+PATH = 'Hadoop/data/'
+Alg = 'ours'
+sys = 'Hadoop_Wordcount'
 
 for j in range(1,4):
     log = np.zeros(3)
