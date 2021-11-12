@@ -64,16 +64,17 @@ if __name__ == "__main__":
                  'mapreduce_job_reduces', 'mapreduce_map_sort_spill_percent',
                  'mapreduce_reduce_shuffle_input_buffer_percent', 'mapreduce_task_io_sort_mb',
                  'mapreduce_map_output_compress']
-    for i in range(1, len(sys.argv)):
-        # params[conf_list[i - 1]] = (float)(sys.argv[i])
-        params[conf_list[i - 1]] = (sys.argv[i])
-    params[conf_list[0]] = (int)(params.get(conf_list[0]))
-    params[conf_list[1]] = (float)(params.get(conf_list[1]))
-    for i in range(3,5):
-        params[conf_list[i]] = (int)(params.get(conf_list[i]))
-    for i in range(5,7):
-        params[conf_list[i]] = (float)(params.get(conf_list[i]))
-    params[conf_list[7]] = (int)(params.get(conf_list[7]))
+
+    params[conf_list[0]] = (int)(10)
+    params[conf_list[1]] = (float)(0.66)
+    params[conf_list[2]] = 'false'
+    params[conf_list[3]] = (int)(1000)
+    params[conf_list[4]] = (int)(1)
+    params[conf_list[5]] = (float)(0.8)
+    params[conf_list[6]] = (float)(0.7)
+    params[conf_list[7]] = (int)(100)
+    params[conf_list[8]] = 'false'
+
     result=get_performance(params=params)
     print(result)
 

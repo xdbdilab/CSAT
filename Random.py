@@ -7,7 +7,7 @@ import numpy as np
 from tqdm import trange
 import time
 
-PATH = 'Hadoop/'
+PATH = 'spark/'
 def Random_spark(size = 100, tag = 1):
 
     params = {}
@@ -141,10 +141,11 @@ def Random_redis(size = 100, tag = 1):
 
 if __name__ == "__main__":
 
-    # for i in range(1,4):
-    #     Random_Hadoop(size = 100, tag = i)
-    # for i in range(1,4):
-    #     Random_Hadoop(size = 200, tag = i)
-    # for i in range(1,4):
-    #     Random_Hadoop(size = 300, tag = i)
-    Random_Hadoop(size=222, tag=3)
+    for i in range(1,4):
+        Random_spark(size = 100, tag = i)
+    for i in range(1,4):
+        Random_spark(size = 200, tag = i)
+    for i in range(1,4):
+        Random_spark(size = 300, tag = i)
+
+    # Random_Hadoop(size=222, tag=3)
