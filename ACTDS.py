@@ -142,7 +142,6 @@ class ACTDS:
         self.V = V.reshape([len(X_p) * len(X_p) - len(X_p), len(self.Interactive(X_p[0], X_p[0]))])
         self.U = U.reshape([len(U), 1])
 
-
     def Comperators_3(self):
         # Classification And Regression Tree
         X_p = self.X_p

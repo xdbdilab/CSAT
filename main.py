@@ -389,7 +389,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 if __name__ == '__main__':
 
     # {100,200,300}*3
-    # Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50)
+
     # Hadoop_Wordcount Now
 
     # for i in range(1,4):
