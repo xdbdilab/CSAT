@@ -22,17 +22,18 @@ import time
 # 导入get_Performance
 from Test.get_Test_Performance import get_performance as test_fun
 import x264.main as x264
-# from Tomcat.Tomcat_performance import getPerformance as Tomcat
+# from tomcat.Tomcat_performance import getPerformance as tomcat
 from spark.benchmark.get_spark_Performance import get_performance as spark
 from sqlite.get_sqlite_Performance import get_performance as sqlite
 from sqlite.check_sqlite import config_fix as sqlite_fix
 from Hadoop.get_hadoop_performance import get_performance as Hadoop
 from apache.get_apache_performance import get_performance as apache
 from redis.get_redis_Performance import get_3Times as redis
+from tomcat.get_tomcat_performance import get_performance as tomcat
 
-SYSTEM = 'Hadoop'# System name (same as file name)
+SYSTEM = 'spark'# System name (same as file name)
 PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # Project path (absolute path)
-WORKLOAD = '_Wordcount'
+WORKLOAD = '_terasort'
 
 def Measure(configuration, system = SYSTEM):
     # Need to modify 0 #################################################################################################
@@ -42,8 +43,14 @@ def Measure(configuration, system = SYSTEM):
     if system == 'x264':
         no_8x8dct,no_cabac,no_deblock,no_fast_pskip,no_mbtree,no_mixed_refs,no_weightb,rc_lookahead,ref = configuration
         return x264.X264.getPerformance(no_8x8dct,no_cabac,no_deblock,no_fast_pskip,no_mbtree,no_mixed_refs,no_weightb,rc_lookahead,ref)
-    if system == 'Tomcat':
-        return "UNDONE!"
+    if system == 'tomcat':
+        name_list = ['maxThreads', 'minSpareThreads', 'executorTerminationTimeoutMillis', 'connectionTimeout', 'maxConnections',
+                 'maxKeepAliveRequests', 'acceptorThreadCount', 'asyncTimeout', 'acceptCount', 'socketBuffer', 'processorCache',
+                 'keepAliveTimeout']
+        params = {}
+        for i in range(len(configuration)):
+            params[name_list[i]] = configuration[i]
+        return tomcat(params)
     if system == 'spark':
         name_list = ['executorCores', 'executorMemory', 'memoryFraction',
                      'memoryStorageFraction', 'defaultParallelism', 'shuffleCompress',
@@ -183,7 +190,7 @@ def output(timestruct):
     name = list(data)
     data = np.array(data)
     # print(data)
-    if SYSTEM in ['x264', 'sqlite', 'apache']:
+    if SYSTEM in ['x264', 'sqlite', 'apache', 'tomcat']:
         data = ANFIS.Union(data)
     data = data[np.argsort(-data[:, -1])[0:np.min([10, len(data)])]]
     print('Recommended performance & configuration:')
@@ -207,7 +214,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
     # Need to modify 1 #################################################################################################
     # Add the name of the system to be tested in the list
-    if system not in ['Test', 'x264', 'Tomcat', 'spark', 'sqlite', 'Hadoop', 'apache', 'redis']:
+    if system not in ['Test', 'x264', 'tomcat', 'spark', 'sqlite', 'Hadoop', 'apache', 'redis']:
         print('Can not do this: ' + system)
         return
 
@@ -246,21 +253,20 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
         bound = [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [40, 250], [1, 9]]
         int_flag = np.ones(9)
 
-    # Tomcat
-    if system == 'Tomcat':
-        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_Tomcat_Recommended.csv", "a+",
+    # tomcat
+    if system == 'tomcat':
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_tomcat_Recommended.csv", "a+",
                      newline="")
         content = csv.writer(file1)
         content.writerow(
-            ['connectionTimeout', 'maxConnections', 'maxKeepAliveRequests', 'acceptorThreadCount', 'asyncTimeout',
-             'socketBuffer', 'acceptCount',
-             'processorCache', 'keepAliveTimeout', 'maxThreads', 'minSpareThreads',
-             'executorTerminationTimeoutMillis', 'PERF'])
+            ['maxThreads', 'minSpareThreads', 'executorTerminationTimeoutMillis', 'connectionTimeout', 'maxConnections',
+             'maxKeepAliveRequests', 'acceptorThreadCount', 'asyncTimeout', 'acceptCount', 'socketBuffer',
+             'processorCache',
+             'keepAliveTimeout', 'PERF'])
         file1.close()
 
         # CB
-        bound = [[0, 500000], [100, 500000], [1, 200], [1, 10], [1, 50000], [1, 50], [1, 200], [1, 500], [1, 30], [1, 500],
-                 [1, 50], [0, 8000]]
+        bound = [[1,500], [1,50], [0,8000], [0,50000],[1,50000],[1,200],[1,10],[1,50000],[1,50],[1,500],[1,500],[1,50]]
         int_flag = np.ones(12)
 
     # spark
@@ -390,14 +396,14 @@ if __name__ == '__main__':
 
     # {100,200,300}*3
 
-    # Hadoop_Wordcount Now
+    # Tomcat Now
 
-    # for i in range(1,4):
-    #     print('ours-100-', i, ':')
-    #     Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
-    # for i in range(1,4):
-    #     print('ours-200-', i, ':')
-    #     Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
+    for i in range(3,4):
+        print('ours-100-', i, ':')
+        Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
+    for i in range(1,4):
+        print('ours-200-', i, ':')
+        Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
     for i in range(1,4):
         print('ours-300-', i, ':')
         Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)
