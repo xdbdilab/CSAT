@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 PATH = 'spark/data/'
-Alg = 'random'
+Alg = 'ours'
 sys = 'spark_terasort'
 
 for j in range(1,4):
