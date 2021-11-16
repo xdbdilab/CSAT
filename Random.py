@@ -180,10 +180,11 @@ def Random_mysql(size = 100, tag = 1):
 
 if __name__ == "__main__":
 
-    for i in range(1,4):
-        Random_mysql(size = 100, tag = i)
-    for i in range(1,4):
-        Random_mysql(size = 200, tag = i)
+    # for i in range(1,4):
+    #     Random_mysql(size = 100, tag = i)
+    # for i in range(1,4):
+    #     Random_mysql(size = 200, tag = i)
+    Random_mysql(size=112, tag=3)
     for i in range(1,4):
         Random_mysql(size = 300, tag = i)
 

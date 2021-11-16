@@ -77,10 +77,3 @@ if __name__ == "__main__":
 
     result=get_performance(params=params)
     print(result)
-
-
-
-
-
-
-
