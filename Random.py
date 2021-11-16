@@ -1,13 +1,14 @@
 from spark.benchmark.get_spark_Performance import get_performance as spark
 from Hadoop.get_hadoop_performance import get_performance as Hadoop
 from redis.get_redis_Performance import get_3Times as redis
+from mysql.get_mysql_Performance import get_performance as mysql
 import csv
 import random
 import numpy as np
 from tqdm import trange
 import time
 
-PATH = 'spark/'
+PATH = 'mysql/'
 def Random_spark(size = 100, tag = 1):
 
     params = {}
@@ -139,13 +140,51 @@ def Random_redis(size = 100, tag = 1):
         print([pref], list(params.values()))
         file1.close()
 
+def Random_mysql(size = 100, tag = 1):
+    params = {}
+    timestamp = time.time()
+    timestruct = time.localtime(timestamp)
+    file1 = open(
+        PATH + 'data/' + "random_mysql_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+                                                                                                      timestruct) + ".csv",
+        "a+", newline="")
+    content = csv.writer(file1)
+
+    # title
+    name_list = ['innodb_buffer_pool_size', 'innodb_thread_concurrency', 'innodb_adaptive_hash_index',
+                 'innodb_flush_log_at_trx_commit', 'join_buffer_size', 'sort_buffer_size', 'tmp_table_size',
+                 'thread_cache_size', 'read_rnd_buffer_size', 'max_heap_table_size', 'PERF']
+    content.writerow(name_list)
+    file1.close()
+
+    for _ in trange(size):
+        file1 = open(PATH + 'data/' + "random_mysql_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+                                                                                                      timestruct) + ".csv",
+                     "a+", newline="")
+        content = csv.writer(file1)
+        params[name_list[0]] = random.randint(262144, 3170304)
+        params[name_list[1]] = random.randint(0, 50)
+        params[name_list[2]] = random.sample([0, 1], 1)[0]
+        params[name_list[3]] = random.sample([0, 1, 2], 1)[0]
+        params[name_list[4]] = random.randint(131072, 150994944)
+        params[name_list[5]] = random.randint(131072, 150994944)
+        params[name_list[6]] = random.randint(131072, 150994944)
+        params[name_list[7]] = random.randint(0, 50)
+        params[name_list[8]] = random.randint(0, 131072)
+        params[name_list[9]] = random.randint(262144, 67108864)
+
+        pref = mysql(params)
+        content.writerow(np.append(list(params.values()), pref))
+        print([pref], list(params.values()))
+        file1.close()
+
 if __name__ == "__main__":
 
     for i in range(1,4):
-        Random_spark(size = 100, tag = i)
+        Random_mysql(size = 100, tag = i)
     for i in range(1,4):
-        Random_spark(size = 200, tag = i)
+        Random_mysql(size = 200, tag = i)
     for i in range(1,4):
-        Random_spark(size = 300, tag = i)
+        Random_mysql(size = 300, tag = i)
 
     # Random_Hadoop(size=222, tag=3)
