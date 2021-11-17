@@ -31,9 +31,9 @@ from apache.get_apache_performance import get_performance as apache
 from redis.get_redis_Performance import get_3Times as redis
 from tomcat.get_tomcat_performance import get_performance as tomcat
 
-SYSTEM = 'spark'# System name (same as file name)
+SYSTEM = 'Test'# System name (same as file name)
 PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # Project path (absolute path)
-WORKLOAD = '_terasort'
+WORKLOAD = ''
 
 def Measure(configuration, system = SYSTEM):
     # Need to modify 0 #################################################################################################
@@ -396,17 +396,19 @@ if __name__ == '__main__':
 
     # {100,200,300}*3
 
-    # Tomcat Now
+    # Test_3 Now
+    for i in range(1, 6):
+        Test(Times_Constraint=40, Recommended_Number=5, Initial_size=25)
 
-    for i in range(3,4):
-        print('ours-100-', i, ':')
-        Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
-    for i in range(1,4):
-        print('ours-200-', i, ':')
-        Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
-    for i in range(1,4):
-        print('ours-300-', i, ':')
-        Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)
+    # for i in range(3,4):
+    #     print('ours-100-', i, ':')
+    #     Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
+    # for i in range(1,4):
+    #     print('ours-200-', i, ':')
+    #     Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
+    # for i in range(1,4):
+    #     print('ours-300-', i, ':')
+    #     Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)
 
     # Test
     # configuration = [0, 200, 10, 1, 30, 1, 1, 2, 1, 2, 2, 50]
