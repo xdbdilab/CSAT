@@ -1,4 +1,0 @@
-innodb_buffer_pool_size,innodb_thread_concurrency,innodb_adaptive_hash_index,innodb_flush_log_at_trx_commit,join_buffer_size,sort_buffer_size,tmp_table_size,thread_cache_size,read_rnd_buffer_size,max_heap_table_size,PERF
-2080604.0,18.0,0.0,1.0,102756490.0,93010484.0,36837335.0,37.0,44352.0,1288244.0,179.47
-1413891.0,33.0,0.0,1.0,39995807.0,97048635.0,144378309.0,13.0,4955.0,35591936.0,183.11
-779246.0,38.0,0.0,2.0,143125059.0,97867435.0,86523089.0,49.0,25709.0,6697536.0,177.45

@@ -30,8 +30,9 @@ from Hadoop.get_hadoop_performance import get_performance as Hadoop
 from apache.get_apache_performance import get_performance as apache
 from redis.get_redis_Performance import get_3Times as redis
 from tomcat.get_tomcat_performance import get_performance as tomcat
+from cassandra.get_cassandra_Performance import get_performance as cassandra
 
-SYSTEM = 'Test'# System name (same as file name)
+SYSTEM = 'cassandra'# System name (same as file name)
 PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # Project path (absolute path)
 WORKLOAD = ''
 
@@ -86,6 +87,26 @@ def Measure(configuration, system = SYSTEM):
         for i in range(len(configuration)):
             params[name_list[i]] = configuration[i]
         return redis(params)
+
+    if system == 'cassandra':
+        name_list = ['write_request_timeout_in_ms', 'read_request_timeout_in_ms', 'commitlog_total_space_in_mb',
+                     'key_cache_size_in_mb',
+                     'commitlog_segment_size_in_mb', 'dynamic_snitch_badness_threshold', 'index_summary_capacity_in_mb',
+                     'key_cache_save_period', 'file_cache_size_in_mb', 'thrift_framed_transport_size_in_mb',
+                     'memtable_heap_space_in_mb',
+                     'concurrent_writes', 'index_summary_resize_interval_in_minutes', 'commitlog_sync_period_in_ms',
+                     'range_request_timeout_in_ms',
+                     'rpc_min_threads', 'batch_size_warn_threshold_in_kb', 'concurrent_reads',
+                     'column_index_size_in_kb', 'dynamic_snitch_update_interval_in_ms',
+                     'memtable_flush_writers', 'request_timeout_in_ms', 'cas_contention_timeout_in_ms',
+                     'permissions_validity_in_ms',
+                     'rpc_max_threads', 'truncate_request_timeout_in_ms', 'stream_throughput_outbound_megabits_per_sec',
+                     'memtable_offheap_space_in_mb']
+
+        params = {}
+        for i in range(len(configuration)):
+            params[name_list[i]] = configuration[i]
+        return cassandra(params)
 
 # Configuration coding: system side -> algorithm side
 def Data_Preprocessing(X):
@@ -190,9 +211,13 @@ def output(timestruct):
     name = list(data)
     data = np.array(data)
     # print(data)
-    if SYSTEM in ['x264', 'sqlite', 'apache', 'tomcat']:
+    if SYSTEM in ['x264', 'sqlite', 'apache', 'tomcat', 'mysql']:
         data = ANFIS.Union(data)
-    data = data[np.argsort(-data[:, -1])[0:np.min([10, len(data)])]]
+    if SYSTEM in ['mysql']:
+        min_flag = 1
+    else:
+        min_flag = -1
+    data = data[np.argsort(min_flag * data[:, -1])[0:np.min([10, len(data)])]]
     print('Recommended performance & configuration:')
     for member in data:
         print([member[-1]], member[0:-1])
@@ -214,7 +239,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
     # Need to modify 1 #################################################################################################
     # Add the name of the system to be tested in the list
-    if system not in ['Test', 'x264', 'tomcat', 'spark', 'sqlite', 'Hadoop', 'apache', 'redis']:
+    if system not in ['Test', 'x264', 'tomcat', 'spark', 'sqlite', 'Hadoop', 'apache', 'redis', 'cassandra']:
         print('Can not do this: ' + system)
         return
 
@@ -346,6 +371,34 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
         bound = [[1, 11], [32, 128], [256, 1024], [-5, -1], [100, 300], [5, 20], [0, 1], [0, 5000], [1, 501]]
         int_flag = np.array(np.ones(9))
 
+    # cassandra
+    if system == 'cassandra':
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_cassandra_Recommended.csv", "a+",
+                     newline="")
+        content = csv.writer(file1)
+        content.writerow(
+            ['write_request_timeout_in_ms', 'read_request_timeout_in_ms', 'commitlog_total_space_in_mb',
+             'key_cache_size_in_mb',
+             'commitlog_segment_size_in_mb', 'dynamic_snitch_badness_threshold', 'index_summary_capacity_in_mb',
+             'key_cache_save_period', 'file_cache_size_in_mb', 'thrift_framed_transport_size_in_mb',
+             'memtable_heap_space_in_mb',
+             'concurrent_writes', 'index_summary_resize_interval_in_minutes', 'commitlog_sync_period_in_ms',
+             'range_request_timeout_in_ms',
+             'rpc_min_threads', 'batch_size_warn_threshold_in_kb', 'concurrent_reads', 'column_index_size_in_kb',
+             'dynamic_snitch_update_interval_in_ms',
+             'memtable_flush_writers', 'request_timeout_in_ms', 'cas_contention_timeout_in_ms',
+             'permissions_validity_in_ms',
+             'rpc_max_threads', 'truncate_request_timeout_in_ms', 'stream_throughput_outbound_megabits_per_sec',
+             'memtable_offheap_space_in_mb', 'PERF'])
+
+        file1.close()
+        # CB
+        bound = [[20, 250000], [20, 250000], [200, 15000], [100, 15000], [30, 2024], [0, 1], [100, 15000], [10, 14400],
+                 [250, 15000], [2, 28], [80, 15000], [20, 3800], [2, 60], [2200, 250000], [2000, 250000], [10, 1000],
+                 [5, 100000], [31, 2000], [64, 60000], [100, 25000], [2, 28], [1000, 25000], [900, 25000], [1600, 25000],
+                 [1048, 3800], [2000, 250000], [100, 8000], [200, 15000]]
+        int_flag = np.array(np.ones(28))
+        int_flag[5] = 0
 
     ####################################################################################################################
 
@@ -354,6 +407,12 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
     data = pd.Series.tolist(pd.read_csv(PATH + system + WORKLOAD + ".csv"))
     data, Processed_Flag, Map = Data_Preprocessing(np.array(data))
     XY = data[random.sample(list(range(len(data))), Initial_size)]
+
+    if system in ['mysql']:
+        min_flag = -1
+    else:
+        min_flag = 1
+    XY[:, -1] = XY[:, -1] * min_flag
 
     # XY = data
 
@@ -380,7 +439,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
         #Data_expansion
         XY = np.append(XY, np.append(Recommended_configuration, Y, axis = 1), axis = 0)
-        Data_file_update(np.append(Recommended_configuration, Y, axis = 1), Processed_Flag, Map, timestruct)
+        Data_file_update(np.append(Recommended_configuration, min_flag * Y, axis = 1), Processed_Flag, Map, timestruct)
 
     #Recommended configuration
     actds = ACTDS(XY[np.argsort(-XY[:,-1])[0:6]] , bound = bound, int_flag = int_flag)
@@ -388,7 +447,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
     Recommended_performance = np.zeros((len(Recommended_configuration), 1))
     for i in range(len(Recommended_performance)):
         Recommended_performance[i] = Measure(configuration = Translation(Recommended_configuration[i], Processed_Flag, Map))
-    Data_file_update(np.append(Recommended_configuration, Recommended_performance, axis=1), Processed_Flag, Map, timestruct)
+    Data_file_update(np.append(Recommended_configuration, min_flag * Recommended_performance, axis=1), Processed_Flag, Map, timestruct)
 
     output(timestruct)
 
@@ -396,19 +455,17 @@ if __name__ == '__main__':
 
     # {100,200,300}*3
 
-    # Test_3 Now
-    for i in range(1, 6):
-        Test(Times_Constraint=40, Recommended_Number=5, Initial_size=25)
+    # cassandra Now
 
-    # for i in range(3,4):
-    #     print('ours-100-', i, ':')
-    #     Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
-    # for i in range(1,4):
-    #     print('ours-200-', i, ':')
-    #     Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
-    # for i in range(1,4):
-    #     print('ours-300-', i, ':')
-    #     Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)
+    for i in range(1,4):
+        print('ours-100-', i, ':')
+        Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
+    for i in range(1,4):
+        print('ours-200-', i, ':')
+        Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
+    for i in range(1,4):
+        print('ours-300-', i, ':')
+        Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)
 
     # Test
     # configuration = [0, 200, 10, 1, 30, 1, 1, 2, 1, 2, 2, 50]

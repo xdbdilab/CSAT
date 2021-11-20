@@ -1,14 +1,14 @@
 from spark.benchmark.get_spark_Performance import get_performance as spark
 from Hadoop.get_hadoop_performance import get_performance as Hadoop
 from redis.get_redis_Performance import get_3Times as redis
-from mysql.get_mysql_Performance import get_performance as mysql
+from cassandra.get_cassandra_Performance import get_performance as cassandra
 import csv
 import random
 import numpy as np
 from tqdm import trange
 import time
 
-PATH = 'mysql/'
+PATH = 'cassandra/'
 def Random_spark(size = 100, tag = 1):
 
     params = {}
@@ -140,52 +140,81 @@ def Random_redis(size = 100, tag = 1):
         print([pref], list(params.values()))
         file1.close()
 
-def Random_mysql(size = 100, tag = 1):
+def Random_cassandra(size = 100, tag = 1):
     params = {}
     timestamp = time.time()
     timestruct = time.localtime(timestamp)
     file1 = open(
-        PATH + 'data/' + "random_mysql_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+        PATH + 'data/' + "random_cassandra_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
                                                                                                       timestruct) + ".csv",
         "a+", newline="")
     content = csv.writer(file1)
 
     # title
-    name_list = ['innodb_buffer_pool_size', 'innodb_thread_concurrency', 'innodb_adaptive_hash_index',
-                 'innodb_flush_log_at_trx_commit', 'join_buffer_size', 'sort_buffer_size', 'tmp_table_size',
-                 'thread_cache_size', 'read_rnd_buffer_size', 'max_heap_table_size', 'PERF']
+    name_list = ['write_request_timeout_in_ms', 'read_request_timeout_in_ms', 'commitlog_total_space_in_mb',
+                 'key_cache_size_in_mb',
+                 'commitlog_segment_size_in_mb', 'dynamic_snitch_badness_threshold', 'index_summary_capacity_in_mb',
+                 'key_cache_save_period', 'file_cache_size_in_mb', 'thrift_framed_transport_size_in_mb',
+                 'memtable_heap_space_in_mb',
+                 'concurrent_writes', 'index_summary_resize_interval_in_minutes', 'commitlog_sync_period_in_ms',
+                 'range_request_timeout_in_ms',
+                 'rpc_min_threads', 'batch_size_warn_threshold_in_kb', 'concurrent_reads', 'column_index_size_in_kb',
+                 'dynamic_snitch_update_interval_in_ms',
+                 'memtable_flush_writers', 'request_timeout_in_ms', 'cas_contention_timeout_in_ms',
+                 'permissions_validity_in_ms',
+                 'rpc_max_threads', 'truncate_request_timeout_in_ms', 'stream_throughput_outbound_megabits_per_sec',
+                 'memtable_offheap_space_in_mb', 'PERF']
+
     content.writerow(name_list)
     file1.close()
 
     for _ in trange(size):
-        file1 = open(PATH + 'data/' + "random_mysql_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+        file1 = open(PATH + 'data/' + "random_cassandra_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
                                                                                                       timestruct) + ".csv",
                      "a+", newline="")
         content = csv.writer(file1)
-        params[name_list[0]] = random.randint(262144, 3170304)
-        params[name_list[1]] = random.randint(0, 50)
-        params[name_list[2]] = random.sample([0, 1], 1)[0]
-        params[name_list[3]] = random.sample([0, 1, 2], 1)[0]
-        params[name_list[4]] = random.randint(131072, 150994944)
-        params[name_list[5]] = random.randint(131072, 150994944)
-        params[name_list[6]] = random.randint(131072, 150994944)
-        params[name_list[7]] = random.randint(0, 50)
-        params[name_list[8]] = random.randint(0, 131072)
-        params[name_list[9]] = random.randint(262144, 67108864)
+        params[name_list[0]] = random.randint(20, 250000)
+        params[name_list[1]] = random.randint(20, 250000)
+        params[name_list[2]] = random.randint(200, 15000)
+        params[name_list[3]] = random.randint(100, 15000)
+        params[name_list[4]] = random.randint(30, 2024)
+        params[name_list[5]] = random.uniform(0, 1)
+        params[name_list[6]] = random.randint(100, 15000)
+        params[name_list[7]] = random.randint(10, 14400)
+        params[name_list[8]] = random.randint(250, 15000)
+        params[name_list[9]] = random.randint(2, 28)
+        params[name_list[10]] = random.randint(80, 15000)
+        params[name_list[11]] = random.randint(20, 3800)
+        params[name_list[12]] = random.randint(2, 60)
+        params[name_list[13]] = random.randint(2200, 250000)
+        params[name_list[14]] = random.randint(2000, 250000)
+        params[name_list[15]] = random.randint(10, 1000)
+        params[name_list[16]] = random.randint(5, 100000)
+        params[name_list[17]] = random.randint(31, 2000)
+        params[name_list[18]] = random.randint(64, 60000)
+        params[name_list[19]] = random.randint(100, 25000)
+        params[name_list[20]] = random.randint(2, 28)
+        params[name_list[21]] = random.randint(1000, 25000)
+        params[name_list[22]] = random.randint(900, 25000)
+        params[name_list[23]] = random.randint(1600, 25000)
+        params[name_list[24]] = random.randint(1048, 3800)
+        params[name_list[25]] = random.randint(2000, 250000)
+        params[name_list[26]] = random.randint(100, 8000)
+        params[name_list[27]] = random.randint(200, 15000)
 
-        pref = mysql(params)
+
+        pref = cassandra(params)
         content.writerow(np.append(list(params.values()), pref))
         print([pref], list(params.values()))
         file1.close()
 
 if __name__ == "__main__":
 
-    # for i in range(1,4):
-    #     Random_mysql(size = 100, tag = i)
-    # for i in range(1,4):
-    #     Random_mysql(size = 200, tag = i)
-    Random_mysql(size=112, tag=3)
     for i in range(1,4):
-        Random_mysql(size = 300, tag = i)
+        Random_cassandra(size = 100, tag = i)
+    for i in range(1,4):
+        Random_cassandra(size = 200, tag = i)
+    for i in range(1,4):
+        Random_cassandra(size = 300, tag = i)
 
     # Random_Hadoop(size=222, tag=3)
