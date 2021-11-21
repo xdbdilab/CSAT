@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 PATH = 'cassandra/data/'
-Alg = 'random'
+Alg = 'ours'
 sys = 'cassandra'
 
 for j in range(1,4):
