@@ -20,8 +20,10 @@ def get_performance(params):
     # http://118.190.159.150:8019/experiment/hadoopTerasort Terasort
     # http://118.190.159.150:8019/experiment/hadoopWordcount Wordcount
     # http://118.190.159.150:8019/experiment/hadoopSort Sort
-    req = request.Request('http://118.190.159.150:8019/experiment/hadoopWordcount?%s' % value, headers=headers)  # 这样就能把参数带过去了
-    print('http://118.190.159.150:8019/experiment/hadoopWordcount?%s' % value)
+    # req = request.Request('http://118.190.159.150:8019/experiment/hadoopTerasort?%s' % value, headers=headers)  # 这样就能把参数带过去了
+    req = request.Request('http://118.190.159.150:8019/experiment/hadoopTerasort?%s' % value, headers=headers)  # 这样就能把参数带过去了
+
+    print('http://118.190.159.150:8019/experiment/hadoopTerasort?%s' % value)
     # 下面是获得响应
     i = 0
 
@@ -66,6 +68,7 @@ if __name__ == "__main__":
                  'mapreduce_map_output_compress']
 
     params[conf_list[0]] = (int)(10)
+
     params[conf_list[1]] = (float)(0.66)
     params[conf_list[2]] = 'false'
     params[conf_list[3]] = (int)(1000)

@@ -305,7 +305,6 @@ class ANFIS:
         random.seed(seed)
         if len(MR) > 0:
             self.MR = np.array(MR[0])
-
         else:
             self.MR = np.array([])
         self.XY = np.array(XY)
@@ -325,6 +324,7 @@ class ANFIS:
         self.X2mf()
 
     def ANFIS(self, Train_index, epoch):
+
         vdw = sdw = 0
         for t in range(1, epoch + 1):
             self.mFun(self.X[Train_index])

@@ -4,9 +4,9 @@ DPT main
 @author: Lyle
 """
 
-from ACTDS import ANFIS
-from ACTDS import ACTDS
-from ACTDS import SAMPLER
+from DPT import ANFIS
+from DPT import ACTDS
+from DPT import SAMPLER
 import numpy as np
 import random
 from sympy import *
@@ -32,9 +32,10 @@ from redis.get_redis_Performance import get_3Times as redis
 from tomcat.get_tomcat_performance import get_performance as tomcat
 from cassandra.get_cassandra_Performance import get_performance as cassandra
 
-SYSTEM = 'cassandra'# System name (same as file name)
+SYSTEM = 'Hadoop'# System name (same as file name)
 PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # Project path (absolute path)
-WORKLOAD = ''
+WORKLOAD = '_Terasort'
+
 
 def Measure(configuration, system = SYSTEM):
     # Need to modify 0 #################################################################################################
@@ -455,17 +456,18 @@ if __name__ == '__main__':
 
     # {100,200,300}*3
 
-    # cassandra Now
+    # Hadoop_Terasort Now
 
-    for i in range(1,4):
-        print('ours-100-', i, ':')
-        Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
-    for i in range(1,4):
-        print('ours-200-', i, ':')
-        Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
-    for i in range(1,4):
-        print('ours-300-', i, ':')
-        Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)
+    # for i in range(1,4):
+    #     print('ours-100-', i, ':')
+    #     Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
+    # for i in range(1,4):
+    #     print('ours-200-', i, ':')
+    #     Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
+    # for i in range(1,4):
+    #     print('ours-300-', i, ':')
+    #     Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)
+    Test(Times_Constraint=290, Recommended_Number=10, Initial_size=220)
 
     # Test
     # configuration = [0, 200, 10, 1, 30, 1, 1, 2, 1, 2, 2, 50]
