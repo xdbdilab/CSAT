@@ -1,5 +1,5 @@
-# DPT
-Distribution Perception-based Tuning
+# DDAT
+Data Distribution Aware-based Tuning
 
 Preparation before the experiment (for details, please refer to the experimental settings of __sqlite__):
 
