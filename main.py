@@ -4,9 +4,9 @@ DPT main
 @author: Lyle
 """
 
-from DPT import ANFIS
-from DPT import ACTDS
-from DPT import SAMPLER
+from DDAT import ANFIS
+from DDAT import DDAT
+from DDAT import SAMPLER
 import numpy as np
 import random
 from sympy import *
@@ -420,7 +420,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
     T = len(XY)
     while T < Times_Constraint:
         #Train
-        actds = ACTDS(XY, bound = bound, int_flag = int_flag)
+        actds = DDAT(XY, bound = bound, int_flag = int_flag)
 
         #Re-Sample
         print('Reference configuration (T = ', T, '\b): \n', np.max(actds.Y),
@@ -443,7 +443,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
         Data_file_update(np.append(Recommended_configuration, min_flag * Y, axis = 1), Processed_Flag, Map, timestruct)
 
     #Recommended configuration
-    actds = ACTDS(XY[np.argsort(-XY[:,-1])[0:6]] , bound = bound, int_flag = int_flag)
+    actds = DDAT(XY[np.argsort(-XY[:,-1])[0:6]] , bound = bound, int_flag = int_flag)
     Recommended_configuration = actds.Generator(actds.X[np.argmax(actds.Y)], size = 10)
     Recommended_performance = np.zeros((len(Recommended_configuration), 1))
     for i in range(len(Recommended_performance)):
@@ -467,7 +467,6 @@ if __name__ == '__main__':
     # for i in range(1,4):
     #     print('ours-300-', i, ':')
     #     Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)
-    Test(Times_Constraint=290, Recommended_Number=10, Initial_size=220)
 
     # Test
     # configuration = [0, 200, 10, 1, 30, 1, 1, 2, 1, 2, 2, 50]
