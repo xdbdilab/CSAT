@@ -458,15 +458,15 @@ if __name__ == '__main__':
 
     # Hadoop_Terasort Now
 
-    # for i in range(1,4):
-    #     print('ours-100-', i, ':')
-    #     Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
-    # for i in range(1,4):
-    #     print('ours-200-', i, ':')
-    #     Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
-    # for i in range(1,4):
-    #     print('ours-300-', i, ':')
-    #     Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)
+    for i in range(1,4):
+        print('ours-100-', i, ':')
+        Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
+    for i in range(1,4):
+        print('ours-200-', i, ':')
+        Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
+    for i in range(1,4):
+        print('ours-300-', i, ':')
+        Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)
 
     # Test
     # configuration = [0, 200, 10, 1, 30, 1, 1, 2, 1, 2, 2, 50]
