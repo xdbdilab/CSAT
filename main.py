@@ -1,7 +1,7 @@
 """
 Created on August 1st 12:00:00 2021
-DPT main
-@author: Lyle
+main
+@author:
 """
 
 from CDAT import ANFIS

@@ -1,7 +1,7 @@
 """
 Created on August 1st 12:00:05 2021
-CDAT main
-@author: Lyle
+CDAT
+@author:
 """
 import numpy as np
 import random
