@@ -68,7 +68,6 @@ if __name__ == "__main__":
                  'mapreduce_map_output_compress']
 
     params[conf_list[0]] = (int)(10)
-
     params[conf_list[1]] = (float)(0.66)
     params[conf_list[2]] = 'false'
     params[conf_list[3]] = (int)(1000)
