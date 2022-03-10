@@ -888,7 +888,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
             <td>18.3%</td>
             <td>46.2%</td>
             <td>8.0%</td>
-            <td><strong>58.1%</strong>/td>
+            <td><strong>58.1%</strong></td>
         </tr>
         <tr>     
             <td>200</td>
