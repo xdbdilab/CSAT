@@ -403,7 +403,7 @@ Specifically, the configuration options for each software system are selected as
         <tr>
             <td>listMaxZiplistSize</td>
             <td>enum</td>
-            <td>{-5,-,-3,-2,-1} [-3]</td>
+            <td>{-5,-4,-3,-2,-1} [-3]</td>
         </tr>
         <tr>
             <td>activeDefragIgnoreBytes</td>
@@ -418,7 +418,7 @@ Specifically, the configuration options for each software system are selected as
         <tr>
             <td>replDisableTcpNodelay</td>
             <td>binary</td>
-            <td>{no,yes} [no]</td>
+            <td>no/yes [no]</td>
         </tr>
         <tr>
             <td>hllSparseMaxBytes</td>
