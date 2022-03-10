@@ -26,7 +26,7 @@ CDAT can be directly executed through source code:
    ``` $ clone http://github.com/_____/CDTA.git```
 
 # Data
-We conduct experiments and obtain data on two cloud clusters and a [cloud server](https://www.aliyun.com/), where each cluster has consisted of three servers, and each server has four Intel![](http://latex.codecogs.com/svg.latex?%5CcircledR) Core![](http://latex.codecogs.com/svg.latex?^%5Ctext{TM})Xeon CPU @ 2.50GHz and 8 GB RAM. The remaining one server is equipped with two Intel![](http://latex.codecogs.com/svg.latex?%5CcircledR) Core![](http://latex.codecogs.com/svg.latex?^%5Ctext{TM})Xeon CPU @ 2.50GHz and 4 GB RAM. CDAT has been evluated on 8 real-world configurable software system:
+We conduct experiments and obtain data on two cloud clusters and a [cloud server](https://www.aliyun.com/), where each cluster has consisted of three servers, and each server has four Intel![](http://latex.codecogs.com/svg.latex?%5CcircledR) Core![](http://latex.codecogs.com/svg.latex?^%5Ctext{TM}) Xeon CPU @ 2.50GHz and 8 GB RAM. The remaining one server is equipped with two Intel![](http://latex.codecogs.com/svg.latex?%5CcircledR) Core![](http://latex.codecogs.com/svg.latex?^%5Ctext{TM})Xeon CPU @ 2.50GHz and 4 GB RAM. CDAT has been evluated on 8 real-world configurable software system:
 
 <table>
     <thead>
@@ -171,7 +171,7 @@ Specifically, the configuration options for each software system are selected as
         </tr>
         <tr>
             <td>mapreduce_map_output_compress</td>
-            <td>int</td>
+            <td>binary</td>
             <td>true/false [false]</td>
         </tr>
     </tbody>
@@ -187,49 +187,69 @@ Specifically, the configuration options for each software system are selected as
     </thead>
     <tbody>
         <tr>
-            <td>mapreduce_task_io_sort_factor</td>
+            <td>executorCores</td>
+            <td>enum</td>
+            <td>{1,2,3,4} [1]</td>
+        </tr>
+        <tr>
+            <td>executorMemory</td>
             <td>int</td>
-            <td>[10,100] [10]</td>
+            <td>[1024,4096] [1024]</td>
         </tr>
         <tr>
-            <td>mapreduce_reduce_shuffle_merge_percent</td>
+            <td>memoryFraction</td>
             <td>float</td>
-            <td>[0.21,0.9] [0.66]</td>
+            <td>[0.1,0.9] [0.6]</td>
         </tr>
         <tr>
-            <td>mapreduce_output_fileoutputformat_compress</td>
+            <td>memoryStorageFraction</td>
+            <td>float</td>
+            <td>[0.1,0.9] [0.6]</td>
+        </tr>
+        <tr>
+            <td>defaultParallelism</td>
+            <td>int</td>
+            <td>[1,12] [2]</td>
+        </tr>
+        <tr>
+            <td>shuffleCompress</td>
             <td>binary</td>
             <td>true/false [false]</td>
         </tr>
         <tr>
-            <td>mapreduce_reduce_merge_inmem_threshold</td>
-            <td>int</td>
-            <td>[10,1000] [1000]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_job_reduces</td>
-            <td>int</td>
-            <td>[1,1000] [1]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_map_sort_spill_percent</td>
-            <td>float</td>
-            <td>[0.5,0.9] [0.8]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_reduce_shuffle_input_buffer_percent</td>
-            <td>float</td>
-            <td>[0.1,0.8] [0.7]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_task_io_sort_mb</td>
-            <td>int</td>
-            <td>[100,260] [100]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_map_output_compress</td>
-            <td>int</td>
+            <td>shuffleSpillCompress</td>
+            <td>binary</td>
             <td>true/false [false]</td>
+        </tr>
+        <tr>
+            <td>broadcastCompress</td>
+            <td>binary</td>
+            <td>true/false [false]</td>
+        </tr>
+        <tr>
+            <td>rddCompress</td>
+            <td>binary</td>
+            <td>true/false [false]</td>
+        </tr>
+        <tr>
+            <td>ioCompressionCodec</td>
+            <td>enum</td>
+            <td>{lz4, lzf, snappy} [snappy]</td>
+        </tr>
+        <tr>
+            <td>reducerMaxSizeInFlight</td>
+            <td>int</td>
+            <td>[8,96] [48]</td>
+        </tr>
+        <tr>
+            <td>shuffleFileBuffer</td>
+            <td>int</td>
+            <td>[8,64] [32]</td>
+        </tr>
+        <tr>
+            <td>serializer</td>
+            <td>enum</td>
+            <td>{org.apache.spark.serializer.JavaSerializer, org.apache.spark.serializer.KryoSerializer]} [org.apache.spark.serializer.JavaSerializer]</td>
         </tr>
     </tbody>
   </table>
@@ -244,49 +264,114 @@ Specifically, the configuration options for each software system are selected as
     </thead>
     <tbody>
         <tr>
-            <td>mapreduce_task_io_sort_factor</td>
-            <td>int</td>
-            <td>[10,100] [10]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_reduce_shuffle_merge_percent</td>
-            <td>float</td>
-            <td>[0.21,0.9] [0.66]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_output_fileoutputformat_compress</td>
+            <td>STANDARD_CACHE_SIZE</td>
             <td>binary</td>
-            <td>true/false [false]</td>
+            <td>1/0 [0]</td>
         </tr>
         <tr>
-            <td>mapreduce_reduce_merge_inmem_threshold</td>
-            <td>int</td>
-            <td>[10,1000] [1000]</td>
+            <td>LOWER_CACHE_SIZE</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
         </tr>
         <tr>
-            <td>mapreduce_job_reduces</td>
-            <td>int</td>
-            <td>[1,1000] [1]</td>
+            <td>HIGHER_CACHE_SIZE</td>
+            <td>binary</td>
+            <td>1/0 [1]</td>
         </tr>
         <tr>
-            <td>mapreduce_map_sort_spill_percent</td>
-            <td>float</td>
-            <td>[0.5,0.9] [0.8]</td>
+            <td>STANDARD_PAGE_SIZE</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
         </tr>
         <tr>
-            <td>mapreduce_reduce_shuffle_input_buffer_percent</td>
-            <td>float</td>
-            <td>[0.1,0.8] [0.7]</td>
+            <td>LOWER_PAGE_SIZE</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
         </tr>
         <tr>
-            <td>mapreduce_task_io_sort_mb</td>
-            <td>int</td>
-            <td>[100,260] [100]</td>
+            <td>HIGHER_PAGE_SIZE</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
         </tr>
         <tr>
-            <td>mapreduce_map_output_compress</td>
-            <td>int</td>
-            <td>true/false [false]</td>
+            <td>HIGHEST_PAGE_SIZE</td>
+            <td>binary</td>
+            <td>1/0 [1]</td>
+        </tr>
+        <tr>
+            <td>SECURE_DELETE_TRUE</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
+        </tr>
+        <tr>
+            <td>SECURE_DELETE_FALSE</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
+        </tr>
+        <tr>
+            <td>SECURE_DELETE_FAST</td>
+            <td>binary</td>
+            <td>1/0 [1]</td>
+        </tr>
+        <tr>
+            <td>TEMP_STORE_DEFAULT</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
+        </tr>
+        <tr>
+            <td>TEMP_STORE_FILE</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
+        </tr>
+        <tr>
+            <td>TEMP_STORE_MEMORY</td>
+            <td>binary</td>
+            <td>1/0 [1]</td>
+        </tr>
+        <tr>
+            <td>SHARED_CACHE_TRUE</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
+        </tr>
+        <tr>
+            <td>SHARED_CACHE_FALSE</td>
+            <td>binary</td>
+            <td>1/0 [1]</td>
+        </tr>
+        <tr>
+            <td>READ_UNCOMMITED_TRUE</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
+        </tr>
+        <tr>
+            <td>READ_UNCOMMITED_FALSE</td>
+            <td>binary</td>
+            <td>1/0 [1]</td>
+        </tr>
+        <tr>
+            <td>FULLSYNC_TRUE</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
+        </tr>
+        <tr>
+            <td>FULLSYNC_FALSE</td>
+            <td>binary</td>
+            <td>1/0 [1]</td>
+        </tr>
+        <tr>
+            <td>TRANSACTION_MODE_DEFERRED</td>
+            <td>binary</td>
+            <td>1/0 [1]</td>
+        </tr>
+        <tr>
+            <td>TRANSACTION_MODE_IMMEDIATE</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
+        </tr>
+        <tr>
+            <td>FTRANSACTION_MODE_EXCLUSIVE</td>
+            <td>binary</td>
+            <td>1/0 [0]</td>
         </tr>
     </tbody>
   </table>
