@@ -393,42 +393,42 @@ Specifically, the configuration options for each software system are selected as
         <tr>
             <td>hashMaxZiplistValue</td>
             <td>int</td>
-            <td>[32,128] [32]</td>
+            <td>[32,128] [60]</td>
         </tr>
         <tr>
             <td>hashMaxZiplistEntries</td>
             <td>int</td>
-            <td>[256,1024] [1024]</td>
+            <td>[256,1024] [862]</td>
         </tr>
         <tr>
             <td>listMaxZiplistSize</td>
             <td>enum</td>
-            <td>{-5,-,-3,-2,-1} [-1]</td>
+            <td>{-5,-,-3,-2,-1} [-3]</td>
         </tr>
         <tr>
             <td>activeDefragIgnoreBytes</td>
             <td>int</td>
-            <td>[100,300] [284]</td>
+            <td>[100,300] [162]</td>
         </tr>
         <tr>
             <td>activeDefragThresholdLower</td>
             <td>int</td>
-            <td>[5,20] [9]</td>
+            <td>[5,20] [15]</td>
         </tr>
         <tr>
             <td>replDisableTcpNodelay</td>
             <td>binary</td>
-            <td>{no,yes} [yes]</td>
+            <td>{no,yes} [no]</td>
+        </tr>
+        <tr>
+            <td>hllSparseMaxBytes</td>
+            <td>int</td>
+            <td>[0,5000] [1139]</td>
         </tr>
         <tr>
             <td>hz</td>
             <td>int</td>
-            <td>[0,5000] [9]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_map_output_compress</td>
-            <td>1,501/td>
-            <td>true/false [false]</td>
+            <td>[1,501] [22]</td>
         </tr>
     </tbody>
   </table>
