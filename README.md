@@ -386,48 +386,48 @@ Specifically, the configuration options for each software system are selected as
     </thead>
     <tbody>
         <tr>
-            <td>mapreduce_task_io_sort_factor</td>
+            <td>replBacklogSize</td>
             <td>int</td>
-            <td>[10,100] [10]</td>
+            <td>[1,11] [10]</td>
         </tr>
         <tr>
-            <td>mapreduce_reduce_shuffle_merge_percent</td>
-            <td>float</td>
-            <td>[0.21,0.9] [0.66]</td>
+            <td>hashMaxZiplistValue</td>
+            <td>int</td>
+            <td>[32,128] [32]</td>
         </tr>
         <tr>
-            <td>mapreduce_output_fileoutputformat_compress</td>
+            <td>hashMaxZiplistEntries</td>
+            <td>int</td>
+            <td>[256,1024] [1024]</td>
+        </tr>
+        <tr>
+            <td>listMaxZiplistSize</td>
+            <td>enum</td>
+            <td>{-5,-,-3,-2,-1} [-1]</td>
+        </tr>
+        <tr>
+            <td>activeDefragIgnoreBytes</td>
+            <td>int</td>
+            <td>[100,300] [284]</td>
+        </tr>
+        <tr>
+            <td>activeDefragThresholdLower</td>
+            <td>int</td>
+            <td>[5,20] [9]</td>
+        </tr>
+        <tr>
+            <td>replDisableTcpNodelay</td>
             <td>binary</td>
-            <td>true/false [false]</td>
+            <td>{no,yes} [yes]</td>
         </tr>
         <tr>
-            <td>mapreduce_reduce_merge_inmem_threshold</td>
+            <td>hz</td>
             <td>int</td>
-            <td>[10,1000] [1000]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_job_reduces</td>
-            <td>int</td>
-            <td>[1,1000] [1]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_map_sort_spill_percent</td>
-            <td>float</td>
-            <td>[0.5,0.9] [0.8]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_reduce_shuffle_input_buffer_percent</td>
-            <td>float</td>
-            <td>[0.1,0.8] [0.7]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_task_io_sort_mb</td>
-            <td>int</td>
-            <td>[100,260] [100]</td>
+            <td>[0,5000] [9]</td>
         </tr>
         <tr>
             <td>mapreduce_map_output_compress</td>
-            <td>int</td>
+            <td>1,501/td>
             <td>true/false [false]</td>
         </tr>
     </tbody>
