@@ -596,7 +596,7 @@ SYSTEM = 'Hadoop'
 PATH = 'CDAT/' + SYSTEM + '/'
 WORKLOAD = '_Sort'
 ```
-After completing each sample size, the script will output a .csv file in __TargetSystem__/data/ showing the 10 CDAT recommended configurations and measured performance.
+After completing each sample size, the script will output a .csv file in __TargetSystem__/data/ showing the 10 CDAT recommended configurations with measured performance.
 
 The time cost of tuning for each experiment ranges from 2-20 minutes depending on the software system, the sample size, and the user's CPU. Typically, the time cost will be smaller when the software system has a smaller number of configurations or when the sample size is small. Therefore, please be aware that for each sample size, the time cost of evaluating 3 experiments ranges from 0.1 hours to 1 hour. 
 
