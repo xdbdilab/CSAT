@@ -110,7 +110,7 @@ We conduct experiments and obtain data on two cloud clusters and a [cloud server
             <td align="center">YCSB</td>
             <td align="center">Operations per second</td>
             <td align="center">28/59</td>
-            <td align="center">1/27/0</td>
+            <td align="center">0/28/0</td>
             <td align="center">max</td>
         </tr>
     </tbody>
@@ -609,49 +609,144 @@ Specifically, the configuration options for each software system are selected as
     </thead>
     <tbody>
         <tr>
-            <td>mapreduce_task_io_sort_factor</td>
+            <td>write_request_timeout_in_ms</td>
             <td>int</td>
-            <td>[10,100] [10]</td>
+            <td>[20,250000] [2000]</td>
         </tr>
         <tr>
-            <td>mapreduce_reduce_shuffle_merge_percent</td>
+            <td>read_request_timeout_in_ms</td>
+            <td>int</td>
+            <td>[20,250000] [5000]</td>
+        </tr>
+        <tr>
+            <td>commitlog_total_space_in_mb</td>
+            <td>int</td>
+            <td>[200, 15000] [8192]</td>
+        </tr>
+        <tr>
+            <td>key_cache_size_in_mb</td>
+            <td>int</td>
+            <td>[100, 15000] [100]</td>
+        </tr>
+        <tr>
+            <td>commitlog_segment_size_in_mb</td>
+            <td>int</td>
+            <td>[30, 2024] [32]</td>
+        </tr>
+        <tr>
+            <td>dynamic_snitch_badness_threshold</td>
             <td>float</td>
-            <td>[0.21,0.9] [0.66]</td>
+            <td>[0,1] [0.1]</td>
         </tr>
         <tr>
-            <td>mapreduce_output_fileoutputformat_compress</td>
-            <td>binary</td>
-            <td>true/false [false]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_reduce_merge_inmem_threshold</td>
+            <td>index_summary_capacity_in_mb</td>
             <td>int</td>
-            <td>[10,1000] [1000]</td>
+            <td>[100, 15000] [100]</td>
         </tr>
         <tr>
-            <td>mapreduce_job_reduces</td>
+            <td>key_cache_save_period</td>
             <td>int</td>
-            <td>[1,1000] [1]</td>
+            <td>[10, 14400] [14400]</td>
         </tr>
         <tr>
-            <td>mapreduce_map_sort_spill_percent</td>
-            <td>float</td>
-            <td>[0.5,0.9] [0.8]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_reduce_shuffle_input_buffer_percent</td>
-            <td>float</td>
-            <td>[0.1,0.8] [0.7]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_task_io_sort_mb</td>
+            <td>file_cache_size_in_mb</td>
             <td>int</td>
-            <td>[100,260] [100]</td>
+            <td>[250, 15000] [512]</td>
         </tr>
         <tr>
-            <td>mapreduce_map_output_compress</td>
+            <td>thrift_framed_transport_size_in_mb</td>
             <td>int</td>
-            <td>true/false [false]</td>
+            <td>[2, 28] [15]</td>
+        </tr>
+        <tr>
+            <td>memtable_heap_space_in_mb</td>
+            <td>int</td>
+            <td>[80, 15000] [2048]</td>
+        </tr>
+        <tr>
+            <td>concurrent_writes</td>
+            <td>int</td>
+            <td>[20, 3800] [32]</td>
+        </tr>
+        <tr>
+            <td>index_summary_resize_interval_in_minutes</td>
+            <td>int</td>
+            <td>[2, 60] [60]</td>
+        </tr>
+        <tr>
+            <td>commitlog_sync_period_in_ms</td>
+            <td>int</td>
+            <td>[2200, 250000] [10000]</td>
+        </tr>
+        <tr>
+            <td>range_request_timeout_in_ms</td>
+            <td>int</td>
+            <td>[2000, 250000] [10000]</td>
+        </tr>
+        <tr>
+            <td>rpc_min_threads</td>
+            <td>int</td>
+            <td>[10, 1000] [16]</td>
+        </tr>
+        <tr>
+            <td>batch_size_warn_threshold_in_kb</td>
+            <td>int</td>
+            <td>[5, 100000] [5]</td>
+        </tr>
+        <tr>
+            <td>concurrent_reads</td>
+            <td>int</td>
+            <td>[31, 2000] [32]</td>
+        </tr>
+        <tr>
+            <td>column_index_size_in_kb</td>
+            <td>int</td>
+            <td>[64, 60000] [64]</td>
+        </tr>
+        <tr>
+            <td>dynamic_snitch_update_interval_in_ms</td>
+            <td>int</td>
+            <td>[100, 25000] [100]</td>
+        </tr>
+        <tr>
+            <td>memtable_flush_writers</td>
+            <td>int</td>
+            <td>[2, 28] [2]</td>
+        </tr>
+        <tr>
+            <td>request_timeout_in_ms</td>
+            <td>int</td>
+            <td>[1000, 25000] [10000]</td>
+        </tr>
+        <tr>
+            <td>cas_contention_timeout_in_ms</td>
+            <td>int</td>
+            <td>[900, 25000] [1000]</td>
+        </tr>
+        <tr>
+            <td>permissions_validity_in_ms</td>
+            <td>int</td>
+            <td>[1600, 25000] [2000]</td>
+        </tr>
+        <tr>
+            <td>rpc_max_threads</td>
+            <td>int</td>
+            <td>[1048, 3800] [2048]</td>
+        </tr>
+        <tr>
+            <td>truncate_request_timeout_in_ms</td>
+            <td>int</td>
+            <td>[2000, 250000] [60000]</td>
+        </tr>
+        <tr>
+            <td>stream_throughput_outbound_megabits_per_sec</td>
+            <td>int</td>
+            <td>[100, 8000] [200]</td>
+        </tr>
+        <tr>
+            <td>memtable_offheap_space_in_mb</td>
+            <td>int</td>
+            <td>[200, 15000] [2048]</td>
         </tr>
     </tbody>
   </table>
