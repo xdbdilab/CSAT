@@ -25,7 +25,7 @@ CDAT can be directly executed through source code:
 
    ``` $ clone http://github.com/_____/CDTA.git```
 
-# Data
+# Subject Systems
 We conduct experiments and obtain data on two cloud clusters and a [cloud server](https://www.aliyun.com/), where each cluster has consisted of three servers, and each server has four Intel![](http://latex.codecogs.com/svg.latex?%5CcircledR) Core![](http://latex.codecogs.com/svg.latex?^%5Ctext{TM}) Xeon CPU @ 2.50GHz and 8 GB RAM. The remaining one server is equipped with two Intel![](http://latex.codecogs.com/svg.latex?%5CcircledR) Core![](http://latex.codecogs.com/svg.latex?^%5Ctext{TM})Xeon CPU @ 2.50GHz and 4 GB RAM. CDAT has been evluated on 8 real-world configurable software system:
 
 <table>
@@ -117,7 +117,7 @@ We conduct experiments and obtain data on two cloud clusters and a [cloud server
 </table>
 
 
-Specifically, the configuration options for each software system are selected as:
+Specifically, the configuration options for each subject system are selected as:
 
 - [Hadoop 3.1.1](https://hadoop.apache.org/)
   <table>
