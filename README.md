@@ -765,7 +765,7 @@ To run CDAT, users need to prepare before the evaluation and then run the script
 
 - If users want to add other systems, add in the script `main.py` (located at line41, line241 and line 247).
 
-Specifically, for target software systems, CDAT will run with three different sample sizes: 100，200，300, and 3 experiments for each sample size. For example, if users want to evaluate DeepPerf with the system Hadoop with workload Sort, the  modification of lines 35-37 will be:
+Specifically, for target software systems, CDAT will run with three different sample sizes: 100，200，300, and 3 experiments for each sample size. For example, if users want to evaluate CDAT with the system Hadoop with workload Sort, the  modification of lines 35-37 will be:
 ```
 SYSTEM = 'Hadoop'
 PATH = 'CDAT/' + SYSTEM + '/'
@@ -773,7 +773,7 @@ WORKLOAD = '_Sort'
 ```
 After completing each sample size, the script will output a .csv file in __TargetSystem__/data/ showing the 10 CDAT recommended configurations with measured performance.
 
-The time cost of tuning for each experiment ranges from 2-20 minutes depending on the software system, the sample size, and the user's CPU. Typically, the time cost will be smaller when the software system has a smaller number of configurations or when the sample size is small. Therefore, please be aware that for each sample size, the time cost of evaluating 3 experiments ranges from 0.1 hours to 1 hour. 
+The time cost of tuning for each experiment ranges from 2-20 minutes depending on the software system, the sample size, and the user's CPU. Typically, the time cost will be smaller when the software system has a smaller number of configurations or when the sample size is small. Therefore, please be aware that for each sample size, the time cost of evaluating 3 experiments ranges from 0.1 to 1 hour. 
 
 # Experimental Results
 To evaluate the performance improvement, we use the ![](http://latex.codecogs.com/svg.latex?%5Crm{Impro}), which is computed as,
