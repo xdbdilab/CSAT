@@ -552,49 +552,49 @@ Specifically, the configuration options for each software system are selected as
     </thead>
     <tbody>
         <tr>
-            <td>mapreduce_task_io_sort_factor</td>
-            <td>int</td>
-            <td>[10,100] [10]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_reduce_shuffle_merge_percent</td>
-            <td>float</td>
-            <td>[0.21,0.9] [0.66]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_output_fileoutputformat_compress</td>
+            <td>no-8x8dct</td>
             <td>binary</td>
-            <td>true/false [false]</td>
+            <td>0/1 [0]</td>
         </tr>
         <tr>
-            <td>mapreduce_reduce_merge_inmem_threshold</td>
+            <td>no-cabac</td>
+            <td>binary</td>
+            <td>0/1 [0]</td>
+        </tr>
+        <tr>
+            <td>no-deblock</td>
+            <td>binary</td>
+            <td>0/1 [0]</td>
+        </tr>
+        <tr>
+            <td>no-fast-pskip</td>
+            <td>binary</td>
+            <td>0/1 [0]</td>
+        </tr>
+        <tr>
+            <td>no-mbtree</td>
+            <td>binary</td>
+            <td>0/1 [0]</td>
+        </tr>
+        <tr>
+            <td>no-mixed-refs</td>
+            <td>binary</td>
+            <td>0/1 [0]</td>
+        </tr>
+        <tr>
+            <td>no-weightb</td>
+            <td>binary</td>
+            <td>0/1 [0]</td>
+        </tr>
+        <tr>
+            <td>rc-lookahead</td>
             <td>int</td>
-            <td>[10,1000] [1000]</td>
+            <td>[40,250] [40]</td>
         </tr>
         <tr>
-            <td>mapreduce_job_reduces</td>
+            <td>ref</td>
             <td>int</td>
-            <td>[1,1000] [1]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_map_sort_spill_percent</td>
-            <td>float</td>
-            <td>[0.5,0.9] [0.8]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_reduce_shuffle_input_buffer_percent</td>
-            <td>float</td>
-            <td>[0.1,0.8] [0.7]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_task_io_sort_mb</td>
-            <td>int</td>
-            <td>[100,260] [100]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_map_output_compress</td>
-            <td>int</td>
-            <td>true/false [false]</td>
+            <td>[1,9] [1]</td>
         </tr>
     </tbody>
   </table>
