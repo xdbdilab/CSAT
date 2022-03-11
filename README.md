@@ -515,49 +515,29 @@ Specifically, the configuration options for each software system are selected as
     </thead>
     <tbody>
         <tr>
-            <td>mapreduce_task_io_sort_factor</td>
+            <td>StartServers</td>
             <td>int</td>
-            <td>[10,100] [10]</td>
+            <td>[1,10] [7]</td>
         </tr>
         <tr>
-            <td>mapreduce_reduce_shuffle_merge_percent</td>
-            <td>float</td>
-            <td>[0.21,0.9] [0.66]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_output_fileoutputformat_compress</td>
-            <td>binary</td>
-            <td>true/false [false]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_reduce_merge_inmem_threshold</td>
+            <td>MinSpareServers</td>
             <td>int</td>
-            <td>[10,1000] [1000]</td>
+            <td>[1,10] [7]</td>
         </tr>
         <tr>
-            <td>mapreduce_job_reduces</td>
+            <td>MaxSpareServers</td>
             <td>int</td>
-            <td>[1,1000] [1]</td>
+            <td>[11,20] [12]</td>
         </tr>
         <tr>
-            <td>mapreduce_map_sort_spill_percent</td>
-            <td>float</td>
-            <td>[0.5,0.9] [0.8]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_reduce_shuffle_input_buffer_percent</td>
-            <td>float</td>
-            <td>[0.1,0.8] [0.7]</td>
-        </tr>
-        <tr>
-            <td>mapreduce_task_io_sort_mb</td>
+            <td>MaxRequestWorkers</td>
             <td>int</td>
-            <td>[100,260] [100]</td>
+            <td>[1,1000] [252]</td>
         </tr>
         <tr>
-            <td>mapreduce_map_output_compress</td>
+            <td>MaxRequestsPerChild</td>
             <td>int</td>
-            <td>true/false [false]</td>
+            <td>[0,1000] [0]</td>
         </tr>
     </tbody>
   </table>

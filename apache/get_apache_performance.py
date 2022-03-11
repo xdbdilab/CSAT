@@ -60,7 +60,7 @@ def get_performance(params):
 
 if __name__ == "__main__":
     params = {}
-    conf_list = ['StartServers', 'MinSpareServers', 'MaxSpareServers', 'MaxRequestWorkers', 'MaxRequestsPerChild']
+    conf_list = ['StartServers', 'MinSpareServers', 'MaxSpareServers', 'MaxRequestWorkers', '0']
     # 47.104.81.179:9000/experiment/httpd?StartServers=7&MinSpareServers=7&MaxSpareServers=12&MaxRequestWorkers=252&MaxRequestsPerChild=0
     for i in range(1, len(sys.argv)):
         # params[conf_list[i - 1]] = (float)(sys.argv[i])
