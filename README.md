@@ -1,7 +1,7 @@
-# CDAT (Configuration Distribution-Aware Tuning)
-Many modern software systems provide numerous configuration options that users can adjust for specific running environments. However, it is always an undue burden on users to configure such a system because of the complex impact of the configuration on the system performance and the lack of understanding of the system. To address this issue, various tuning approaches have been proposed to automatically find the optimal configuration by directly using some search strategies or learning a surrogate model. The essential difference among these methods is the way to exploit and explore the underlying distribution of configuration space. The key idea of CDAT is to **automatically capture the distribution of the optimal configurations and generate the optimal configuration based on such distribution**.  Specifically, CDAT consists of three main steps:
-- Step 1: Construct a distribution model to convert the configuration to its corresponding distribution feature
-- Step 2: Learn a comparison-based model to find the distribution of better configurations
+# CSAT (Configuration Structure-Aware Tuning)
+Many modern software systems provide numerous configuration options that users can adjust for specific running environments. However, it is always an undue burden on users to configure such a system because of the complex impact of the configuration on the system performance and the lack of understanding of the system. To address this issue, various tuning approaches have been proposed to automatically find the optimal configuration by directly using some search strategies or learning a surrogate model. The essential difference among these methods is the way to exploit and explore the underlying distribution of configuration space. The key idea of CSAT is to **automatically capture the structure of the optimal configurations to construct the distribution and determine the optimal configuration based on such a distribution**.  Specifically, CSAT consists of three main steps:
+- Step 1: Construct a structure model to convert the configuration to its corresponding structure feature.
+- Step 2: Learn a comparison-based model to construct the distribution of performance.
 - Step 3: Generate the potentially promising configurations based on the distribution from Step 2.
 
 # Prerequisites
@@ -10,7 +10,7 @@ Many modern software systems provide numerous configuration options that users c
 - pandas 1.1.5
 
 # Installation
-CDAT can be directly executed through source code:
+CSAT can be directly executed through source code:
 1. Download and install [Python 3.x](https://www.python.org/downloads/).
 
 2. Install numpy
@@ -21,12 +21,12 @@ CDAT can be directly executed through source code:
 
    ``` $ pip install pandas```
 
-4. Clone CDAT (*Unpublished during double-blind review process*).
+4. Clone CSAT.
 
-   ``` $ clone http://github.com/_____/CDTA.git```
+   ``` $ clone http://github.com/xdbdilab/CSAT.git```
 
 # Subject Systems
-We conduct experiments and obtain data on two cloud clusters and a [cloud server](https://www.aliyun.com/), where each cluster has consisted of three servers, and each server has four Intel![](http://latex.codecogs.com/svg.latex?%5CcircledR) Core![](http://latex.codecogs.com/svg.latex?^%5Ctext{TM}) Xeon CPU @ 2.50GHz and 8 GB RAM. The remaining one server is equipped with two Intel![](http://latex.codecogs.com/svg.latex?%5CcircledR) Core![](http://latex.codecogs.com/svg.latex?^%5Ctext{TM})Xeon CPU @ 2.50GHz and 4 GB RAM. CDAT has been evluated on 8 real-world configurable software system:
+We conduct experiments and obtain data on two cloud clusters and a [cloud server](https://www.aliyun.com/), where each cluster has consisted of three servers, and each server has four Intel![](http://latex.codecogs.com/svg.latex?%5CcircledR) Core![](http://latex.codecogs.com/svg.latex?^%5Ctext{TM}) Xeon CPU @ 2.50GHz and 8 GB RAM. The remaining one server is equipped with two Intel![](http://latex.codecogs.com/svg.latex?%5CcircledR) Core![](http://latex.codecogs.com/svg.latex?^%5Ctext{TM})Xeon CPU @ 2.50GHz and 4 GB RAM. CSAT has been evluated on 8 real-world configurable software system:
 
 <table>
     <thead>
@@ -753,7 +753,7 @@ Specifically, the configuration options for each subject system are selected as:
 
 # Usage
 
-To run CDAT, users need to prepare before the evaluation and then run the script `main.py`. For details, users can refer to the experimental setup of __sqlite__ (__TargetSystem__), including the following:
+To run CSAT, users need to prepare before the evaluation and then run the script `main.py`. For details, users can refer to the experimental setup of __sqlite__ (__TargetSystem__), including the following:
 
 - Create folders: __TargetSystem__ /data/
 
@@ -765,13 +765,13 @@ To run CDAT, users need to prepare before the evaluation and then run the script
 
 - If users want to add other systems, add in the script `main.py` (located at line41, line241 and line 247).
 
-Specifically, for target software systems, CDAT will run with three different sample sizes: 100，200，300, and 3 experiments for each sample size. For example, if users want to evaluate CDAT with the system Hadoop with workload Sort, the  modification of lines 35-37 will be:
+Specifically, for target software systems, CSAT will run with three different sample sizes: 100，200，300, and 3 experiments for each sample size. For example, if users want to evaluate CSAT with the system Hadoop with workload Sort, the  modification of lines 35-37 will be:
 ```
 SYSTEM = 'Hadoop'
-PATH = 'CDAT/' + SYSTEM + '/'
+PATH = 'CSAT/' + SYSTEM + '/'
 WORKLOAD = '_Sort'
 ```
-After completing each sample size, the script will output a .csv file in __TargetSystem__/data/ showing the 10 CDAT recommended configurations with measured performance.
+After completing each sample size, the script will output a .csv file in __TargetSystem__/data/ showing the 10 CSAT recommended configurations with measured performance.
 
 The time cost of tuning for each experiment ranges from 2-20 minutes depending on the software system, the sample size, and the user's CPU. Typically, the time cost will be smaller when the software system has a smaller number of configurations or when the sample size is small. Therefore, please be aware that for each sample size, the time cost of evaluating 3 experiments ranges from 0.1 to 1 hour. 
 
@@ -782,7 +782,7 @@ To evaluate the performance improvement, we use the ![](http://latex.codecogs.co
 
 where![](http://latex.codecogs.com/svg.latex?SUT) is system under tune, W is workload, ![](http://latex.codecogs.com/svg.latex?C_o) is the optimal configuration generated by tuning methods, and ![](http://latex.codecogs.com/svg.latex?C_d) is the default configuration. 
 
-In the table below, we use three different measurement constraints (i.e., 100, 200, 300) to evaluate the impact of measurement effort.  The results are obtained when evaluating CDAT on a Windows 10 computer with Intel![](http://latex.codecogs.com/svg.latex?%5CcircledR) Core![](http://latex.codecogs.com/svg.latex?^%5Ctext{TM}) i7-8700 CPU @ 3.20GHz 16GB RAM.
+In the table below, we use three different measurement constraints (i.e., 100, 200, 300) to evaluate the impact of measurement effort.  The results are obtained when evaluating CSAT on a Windows 10 computer with Intel![](http://latex.codecogs.com/svg.latex?%5CcircledR) Core![](http://latex.codecogs.com/svg.latex?^%5Ctext{TM}) i7-8700 CPU @ 3.20GHz 16GB RAM.
 
 <table>
     <thead>
@@ -797,7 +797,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
             <th scope="col">Hyperopt</th>
             <th scope="col">BestConfig</th>
             <th scope="col">RHFOC</th>
-            <th scope="col">CDAT</th>
+            <th scope="col">CSAT</th>
         </tr>
     </thead>
     <tbody>
@@ -805,16 +805,16 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
             <td rowspan="9" align="center">Spark</td>
             <td rowspan="3">Wordcount</td>
             <td>100</td>
-            <td><strong>48.8%</strong></td>
+            <td>37.1%</td>
             <td>27.7%</td>
             <td>25.6%</td>
             <td>21.4%</td>
             <td>8.5%</td>
-            <td>48.2%</td>
+            <td><strong>48.2%</strong></td>
         </tr>
         <tr>
             <td>200</td>
-            <td>53.6%</td>
+            <td>41.2%</td>
             <td>26.4%</td>
             <td>37.5%</td>
             <td>26.8%</td>
@@ -823,7 +823,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>300</td>
-            <td>55.0%</td>
+            <td>37.9%</td>
             <td>22.0%</td>
             <td>41.3%</td>
             <td>30.6%</td>
@@ -833,7 +833,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         <tr>
             <td rowspan="3">Sort</td>
             <td>100</td>     
-            <td>60.9%</td>
+            <td>54.3%</td>
             <td>34.2%</td>
             <td>55.0%</td>
             <td>49.6%</td>
@@ -842,7 +842,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>200</td>    
-            <td>67.2%</td>
+            <td>60.0%</td>
             <td>46.9%</td>
             <td>61.1%</td>
             <td>63.4%</td>
@@ -851,7 +851,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>300</td>     
-            <td>69.1%</td>
+            <td>63.8%</td>
             <td>45.5%</td>
             <td>69.5%</td>
             <td>30.6%</td>
@@ -861,7 +861,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         <tr>
             <td rowspan="3">Terasort</td>
             <td>100</td> 
-            <td>83.1%</td>
+            <td>65.3%</td>
             <td>60.2%</td>
             <td>82.8%</td>
             <td>87.3%</td>
@@ -870,7 +870,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>200</td>     
-            <td>94.0%</td>
+            <td>88.6%</td>
             <td>67.4%</td>
             <td>102.9%</td>
             <td>81.2%</td>
@@ -879,7 +879,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>300</td>    
-            <td>105.0%</td>
+            <td>94.7%</td>
             <td>72.2%</td>
             <td>98.2%</td>
             <td>92.1%</td>
@@ -890,16 +890,16 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
             <td rowspan="9">Hadoop</td>
             <td rowspan="3">Wordcount</td>
             <td>100</td>     
-            <td><strong>5.6%</strong></td>
+            <td>3.5%</td>
             <td>1.0%</td>
             <td>4.3%</td>
             <td>2.4%</td>
             <td>-0.9%</td>
-            <td>5.0%</td>
+            <td><strong>5.0%</strong></td>
         </tr>
         <tr>
             <td>200</td>     
-            <td>7.5%</td>
+            <td>4.1%</td>
             <td>0.4%</td>
             <td>4.5%</td>
             <td>3.1%</td>
@@ -908,7 +908,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>300</td>     
-            <td>4.0%</td>
+            <td>3.9%</td>
             <td>0.9%</td>
             <td>46.1%</td>
             <td>2.3%</td>
@@ -918,16 +918,16 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         <tr>
             <td rowspan="3">Sort</td>
             <td>100</td>     
-            <td><strong>7.0%</strong></td>
+            <td>5.6%</td>
             <td>5.0%</td>
             <td>5.0%</td>
             <td>2.7%</td>
             <td>0.2%</td>
-            <td>6.7%</td>
+            <td><strong>6.7%</strong></td>
         </tr>
         <tr>     
             <td>200</td>
-            <td>9.9%</td>
+            <td>8.1%</td>
             <td>6.6%</td>
             <td>5.5%</td>
             <td>4.3%</td>
@@ -936,7 +936,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>     
             <td>300</td>
-            <td>10.8%</td>
+            <td>8.0%</td>
             <td>6.4%</td>
             <td>4.2%</td>
             <td>5.9%</td>
@@ -946,7 +946,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         <tr>
             <td rowspan="3">Terasort</td>
             <td>100</td>     
-            <td>15.0%</td>
+            <td>14.6%</td>
             <td>8.4%</td>
             <td>11.5%</td>
             <td>10.0%</td>
@@ -955,7 +955,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>200</td>   
-            <td>18.0%</td>
+            <td>16.8%</td>
             <td>8.6%</td>
             <td>12.2%</td>
             <td>11.3%</td>
@@ -964,7 +964,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>300</td>     
-            <td>16.9%</td>
+            <td>15.8%</td>
             <td>7.2%</td>
             <td>15.5%</td>
             <td>12.3%</td>
@@ -974,7 +974,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         <tr>
             <td rowspan="3" colspan="2"  align="center">Cassandra</td>
             <td>100</td>     
-            <td>21.2%</td>
+            <td>19.5%</td>
             <td>19.7%</td>
             <td><strong>23.2%</strong></td>
             <td>20.4%</td>
@@ -983,7 +983,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>     
             <td>200</td>
-            <td>21.7%</td>
+            <td>20.6%</td>
             <td>23.4%</td>
             <td>23.1%</td>
             <td>20.8%</td>
@@ -992,7 +992,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>     
             <td>300</td>
-            <td>23.0%</td>
+            <td>19.7%</td>
             <td>22.3%</td>
             <td>24.3%</td>
             <td>23.0%</td>
@@ -1002,7 +1002,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         <tr>
             <td rowspan="3" colspan="2"  align="center">Redis</td>
             <td>100</td>     
-            <td>35.4%</td>
+            <td>22.8%</td>
             <td>9.1%</td>
             <td>23.0%</td>
             <td>22.3%</td>
@@ -1011,7 +1011,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>200</td>     
-            <td>34.2%</td>
+            <td>19.5%</td>
             <td>9.6%</td>
             <td>22.2%</td>
             <td>30.2%</td>
@@ -1020,7 +1020,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>300</td>     
-            <td>42.8%</td>
+            <td>27.8%</td>
             <td>19.0%</td>
             <td>33.6%</td>
             <td>29.4%</td>
@@ -1030,7 +1030,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         <tr>
             <td rowspan="3" colspan="2"  align="center">SQLite</td>
             <td>100</td>     
-            <td>16.4%</td>
+            <td>12.0%</td>
             <td>6.6%</td>
             <td>13.9%</td>
             <td>14.7%</td>
@@ -1039,7 +1039,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>200</td>     
-            <td>21.7%</td>
+            <td>14.3%</td>
             <td>15.9%</td>
             <td>16.0%</td>
             <td>12.9%</td>
@@ -1048,7 +1048,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>300</td>     
-            <td>26.2%</td>
+            <td>14.2%</td>
             <td>13.7%</td>
             <td>17.0%</td>
             <td>17.3%</td>
@@ -1058,7 +1058,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         <tr>
             <td rowspan="3" colspan="2"  align="center">Tomcat</td>
             <td>100</td>     
-            <td>26.6%</td>
+            <td>19.7%</td>
             <td>36.6%</td>
             <td>18.3%</td>
             <td>46.2%</td>
@@ -1067,7 +1067,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>     
             <td>200</td>
-            <td>35.0%</td>
+            <td>24.5%</td>
             <td>26.8%</td>
             <td>50.4%</td>
             <td>40.7%</td>
@@ -1076,7 +1076,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>300</td>     
-            <td>55.7%</td>
+            <td>44.4%</td>
             <td>42.4%</td>
             <td>39.9%</td>
             <td>56.5%</td>
@@ -1086,7 +1086,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         <tr>
             <td rowspan="3" colspan="2"  align="center">x264</td>
             <td>100</td>     
-            <td>86.0%</td>
+            <td>38.9%</td>
             <td>55.7%</td>
             <td>82.1%</td>
             <td>78.0%</td>
@@ -1095,7 +1095,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>     
             <td>200</td>
-            <td>87.9%</td>
+            <td>70.3%</td>
             <td>76.7%</td>
             <td>86.6%</td>
             <td>80.9%</td>
@@ -1104,7 +1104,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>300</td>     
-            <td>87.7%</td>
+            <td>79.6%</td>
             <td>76.6%</td>
             <td>76.4%</td>
             <td>83.9%</td>
@@ -1114,7 +1114,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         <tr>
             <td rowspan="3" colspan="2"  align="center">Apache</td>
             <td>100</td>     
-            <td>49.4%</td>
+            <td>37.6%</td>
             <td>33.6%</td>
             <td>48.3%</td>
             <td>48.5%</td>
@@ -1123,7 +1123,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>     
             <td>200</td>
-            <td>55.3%</td>
+            <td>37.8%</td>
             <td>44.0%</td>
             <td>47.0%</td>
             <td><strong>57.0%</strong></td>
@@ -1132,7 +1132,7 @@ In the table below, we use three different measurement constraints (i.e., 100, 2
         </tr>
         <tr>
             <td>300</td>     
-            <td>57.0%</td>
+            <td>47.2%</td>
             <td>33.8%</td>
             <td>49.7%</td>
             <td>50.7%</td>
