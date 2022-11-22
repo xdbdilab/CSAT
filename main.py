@@ -4,9 +4,9 @@ main
 @author:
 """
 
-from CDAT import ANFIS
-from CDAT import CDAT
-from CDAT import SAMPLER
+from CSAT import ANFIS
+from CSAT import CSAT
+from CSAT import SAMPLER
 import numpy as np
 import random
 from sympy import *
@@ -33,7 +33,7 @@ from tomcat.get_tomcat_performance import get_performance as tomcat
 from cassandra.get_cassandra_Performance import get_performance as cassandra
 
 SYSTEM = 'Test'# System name (same as file name)
-PATH = 'H:/FSE_2022_ACTDS/ACTDS2/' + SYSTEM + '/' # Project path (absolute path)
+PATH = SYSTEM + '/' # Project path (absolute path)
 WORKLOAD = '' # add '_'( e.g., '_Sort')
 
 
@@ -420,7 +420,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
     T = len(XY)
     while T < Times_Constraint:
         #Train
-        actds = CDAT(XY, bound = bound, int_flag = int_flag)
+        actds = CSAT(XY, bound = bound, int_flag = int_flag)
 
         #Re-Sample
         print('Reference configuration (T = ', T, '\b): \n', np.max(actds.Y),
@@ -443,7 +443,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
         Data_file_update(np.append(Recommended_configuration, min_flag * Y, axis = 1), Processed_Flag, Map, timestruct)
 
     #Recommended configuration
-    actds = CDAT(XY[np.argsort(-XY[:,-1])[0:6]] , bound = bound, int_flag = int_flag)
+    actds = CSAT(XY[np.argsort(-XY[:,-1])[0:6]] , bound = bound, int_flag = int_flag)
     Recommended_configuration = actds.Generator(actds.X[np.argmax(actds.Y)], size = 10)
     Recommended_performance = np.zeros((len(Recommended_configuration), 1))
     for i in range(len(Recommended_performance)):

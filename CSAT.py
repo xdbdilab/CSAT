@@ -1,6 +1,6 @@
 """
 Created on August 1st 12:00:05 2021
-CDAT
+CSAT
 @author:
 """
 import numpy as np
@@ -12,7 +12,7 @@ from sympy import *
 
 # Configuration_Name: Interpretation
 
-class CDAT:
+class CSAT:
 
     def __init__(self, XY, bound = -1, int_flag = []):
         self.XY = np.array(XY)

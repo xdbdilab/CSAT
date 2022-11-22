@@ -4,7 +4,7 @@ import random
 import pandas as pd
 import numpy as np
 
-PATH = "H:/FSE_2022_ACTDS/ACTDS2/x264/"
+PATH = "./x264/"
     #Location of software and video (the same path)
 
 class X264:
