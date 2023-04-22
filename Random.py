@@ -2,13 +2,24 @@ from spark.benchmark.get_spark_Performance import get_performance as spark
 from Hadoop.get_hadoop_performance import get_performance as Hadoop
 from redis.get_redis_Performance import get_3Times as redis
 from cassandra.get_cassandra_Performance import get_performance as cassandra
+from sqlite.get_sqlite_Performance import get_performance as sqlite
+import CNFwithSAT as cnf
+import x264.main as x264
 import csv
 import random
 import numpy as np
 from tqdm import trange
 import time
+from copy import deepcopy
+import pandas as pd
 
-PATH = 'cassandra/'
+
+SYSTEM = 'sqlite'# System name (same as file name)
+PATH = SYSTEM + '/'  # Project path (absolute path)
+WORKLOAD = '_CNF' # add '_'(e.g., '_Sort')
+
+
+
 def Random_spark(size = 100, tag = 1):
 
     params = {}
@@ -208,13 +219,192 @@ def Random_cassandra(size = 100, tag = 1):
         print([pref], list(params.values()))
         file1.close()
 
+def Random_x264(size = 100, tag = 1, CNF_flag = False):
+
+    SYSTEM = 'x264'
+
+    bound = [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [40, 250], [1, 9]]
+    threshold = np.mean(bound, axis=1)
+    k = len(bound)
+    try:
+        clauses = cnf.load_CNF(PATH + SYSTEM + '_CNF.txt')
+    except:
+        while 1:
+            clauses = [cnf.random_clause(k) for i in range(int(k / 2))]
+            print('CNF: ', clauses, end=', ')
+            model = {}
+            result = cnf.dpll(deepcopy(clauses), model)
+            print(result[0], end='')
+            if result[0]:
+                score = cnf.test_CNF(deepcopy(clauses), k)
+                print(', ', score)
+                if score < 0.15:
+                    continue
+                else:
+                    cnf.save_CNF(PATH + SYSTEM + '_CNF.txt', clauses)
+                    break
+            print('\n')
+
+    params = {}
+    timestamp = time.time()
+    timestruct = time.localtime(timestamp)
+    if CNF_flag:
+        file1 = open(
+            PATH + 'data/' + "random_x264_CNF_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+                                                                                               timestruct) + ".csv",
+            "a+", newline="")
+    else:
+        file1 = open(
+            PATH + 'data/' + "random_x264_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+                                                                                               timestruct) + ".csv",
+            "a+", newline="")
+    content = csv.writer(file1)
+
+    # title
+    name_list = ['no-8x8dct', 'no-cabac', 'no-deblock', 'no-fast-pskip', 'no-mbtree', 'no-mixed-refs', 'no-weightb',
+             'rc-lookahead', 'ref', 'PERF']
+
+    content.writerow(name_list)
+    file1.close()
+
+    for _ in trange(size):
+        if CNF_flag:
+            file1 = open(
+                PATH + 'data/' + "random_x264_CNF_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+                                                                                                       timestruct) + ".csv",
+                "a+", newline="")
+        else:
+            file1 = open(
+                PATH + 'data/' + "random_x264_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+                                                                                                   timestruct) + ".csv",
+                "a+", newline="")
+        content = csv.writer(file1)
+
+        params_list = []
+        for i in range(len(bound)):
+            value = random.randint(bound[i][0], bound[i][1])
+            params[name_list[i]] = value
+            params_list.append(value)
+
+        flag = True
+        if CNF_flag:
+            model = dict()
+            for i in range(1, k + 1):
+                if params_list[i - 1] >= threshold[i - 1]:
+                    model[i] = True
+                else:
+                    model[i] = False
+            flag = cnf.verification(clauses, model)
+        if flag:
+            pref = x264.X264.getPerformance(*params_list)
+        else:
+            pref = -1
+
+        content.writerow(np.append(list(params.values()), pref))
+        print([pref], list(params.values()))
+        file1.close()
+
+def Random_sqlite(size = 100, tag = 1, CNF_flag = False):
+
+    SYSTEM = 'sqlite'
+
+    bound = [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1],
+             [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]
+    threshold = np.mean(bound, axis=1)
+    k = len(bound)
+    try:
+        clauses = cnf.load_CNF(PATH + SYSTEM + '_CNF.txt')
+    except:
+        while 1:
+            clauses = [cnf.random_clause(k) for i in range(3)]
+            print('CNF: ', clauses, end=', ')
+            model = {}
+            result = cnf.dpll(deepcopy(clauses), model)
+            print(result[0], end='')
+            if result[0]:
+
+                score = cnf.test_CNF(deepcopy(clauses), k)
+                print(', ', score)
+                if score < 0.15:
+                    continue
+                else:
+                    cnf.save_CNF(PATH + SYSTEM + '_CNF.txt', clauses)
+                    break
+            print('\n')
+
+    params = {}
+    timestamp = time.time()
+    timestruct = time.localtime(timestamp)
+    if CNF_flag:
+        file1 = open(
+            PATH + 'data/' + "random_sqlite_CNF_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+                                                                                               timestruct) + ".csv",
+            "a+", newline="")
+    else:
+        file1 = open(
+            PATH + 'data/' + "random_sqlite_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+                                                                                               timestruct) + ".csv",
+            "a+", newline="")
+    content = csv.writer(file1)
+
+    # title
+    name_list = ['STANDARD_CACHE_SIZE', 'LOWER_CACHE_SIZE', 'HIGHER_CACHE_SIZE', 'STANDARD_PAGE_SIZE',
+             'LOWER_PAGE_SIZE', 'HIGHER_PAGE_SIZE', 'HIGHEST_PAGE_SIZE', 'SECURE_DELETE_TRUE',
+             'SECURE_DELETE_FALSE', 'SECURE_DELETE_FAST', 'TEMP_STORE_DEFAULT',
+             'TEMP_STORE_FILE', 'TEMP_STORE_MEMORY', 'SHARED_CACHE_TRUE', 'SHARED_CACHE_FALSE',
+             'READ_UNCOMMITED_TRUE',
+             'READ_UNCOMMITED_FALSE', 'FULLSYNC_TRUE', 'FULLSYNC_FALSE', 'TRANSACTION_MODE_DEFERRED',
+             'TRANSACTION_MODE_IMMEDIATE',
+             'TRANSACTION_MODE_EXCLUSIVE', 'PERF']
+
+    content.writerow(name_list)
+    file1.close()
+
+    for _ in trange(size):
+        if CNF_flag:
+            file1 = open(
+                PATH + 'data/' + "random_sqlite_CNF_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+                                                                                                       timestruct) + ".csv",
+                "a+", newline="")
+        else:
+            file1 = open(
+                PATH + 'data/' + "random_sqlite_" + str(size) + "_" + str(tag) + "_" + time.strftime('%Y%m%d%H%M%S',
+                                                                                                   timestruct) + ".csv",
+                "a+", newline="")
+        content = csv.writer(file1)
+
+        params_list = []
+        for i in range(len(bound)):
+            value = random.randint(bound[i][0], bound[i][1])
+            params[name_list[i]] = value
+            params_list.append(value)
+
+        flag = True
+        if CNF_flag:
+            model = dict()
+            for i in range(1, k + 1):
+                if params_list[i - 1] >= threshold[i - 1]:
+                    model[i] = True
+                else:
+                    model[i] = False
+            flag = cnf.verification(clauses, model)
+        if flag:
+            pref = sqlite(params_list)
+        else:
+            pref = -1
+
+        content.writerow(np.append(list(params.values()), pref))
+        print([pref], list(params.values()))
+        file1.close()
+
 if __name__ == "__main__":
 
     for i in range(1,4):
-        Random_cassandra(size = 100, tag = i)
+        random.seed(i)
+        Random_sqlite(size = 100, tag = i, CNF_flag=True)
     for i in range(1,4):
-        Random_cassandra(size = 200, tag = i)
+        random.seed(i)
+        Random_sqlite(size = 200, tag = i, CNF_flag=True)
     for i in range(1,4):
-        Random_cassandra(size = 300, tag = i)
-
-    # Random_Hadoop(size=222, tag=3)
+        random.seed(i)
+        Random_sqlite(size = 300, tag = i, CNF_flag=True)

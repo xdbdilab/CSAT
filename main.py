@@ -6,10 +6,8 @@ main
 
 from CSAT import ANFIS
 from CSAT import CSAT
-from CSAT import SAMPLER
 import numpy as np
 import random
-from sympy import *
 import pandas as pd
 import csv
 import time
@@ -22,24 +20,26 @@ import time
 # 导入get_Performance
 from Test.get_Test_Performance import get_performance as test_fun
 import x264.main as x264
-# from tomcat.Tomcat_performance import getPerformance as tomcat
 from spark.benchmark.get_spark_Performance import get_performance as spark
 from sqlite.get_sqlite_Performance import get_performance as sqlite
-from sqlite.check_sqlite import config_fix as sqlite_fix
 from Hadoop.get_hadoop_performance import get_performance as Hadoop
 from apache.get_apache_performance import get_performance as apache
 from redis.get_redis_Performance import get_3Times as redis
 from tomcat.get_tomcat_performance import get_performance as tomcat
 from cassandra.get_cassandra_Performance import get_performance as cassandra
+import CNFwithSAT as cnf
 
-SYSTEM = 'Test'# System name (same as file name)
+
+
+SYSTEM = 'sqlite'# System name (same as file name)
 PATH = SYSTEM + '/' # Project path (absolute path)
-WORKLOAD = '' # add '_'( e.g., '_Sort')
-
+WORKLOAD = '_CNF' # add '_'(e.g., '_Sort')
 
 def Measure(configuration, system = SYSTEM):
     # Need to modify 0 #################################################################################################
     # Input is configuration (list) and output is performance value
+    configuration = np.array(configuration)
+
     if system == 'Test':
         return test_fun(configuration)
     if system == 'x264':
@@ -111,6 +111,7 @@ def Measure(configuration, system = SYSTEM):
 
 # Configuration coding: system side -> algorithm side
 def Data_Preprocessing(X):
+    # print(X.shape)
     Processed_Flag = np.zeros(X.shape[1])
     Map = []
     f_X = np.zeros(X.shape)
@@ -149,8 +150,7 @@ def Translation(configuration, Processed_Flag, Map):
             new_configuration[i] = -1
 
     # If the system configuration has special internal constraints, please specify here ################################
-    if SYSTEM == 'sqlite':
-        new_configuration = sqlite_fix(new_configuration)
+
     if SYSTEM == 'Hadoop':
         for i in range(len(configuration)):
             if configuration[2] == 1:
@@ -161,7 +161,6 @@ def Translation(configuration, Processed_Flag, Map):
                 new_configuration[8] = 'true'
             else:
                 new_configuration[8] = 'false'
-
             if configuration[0] >= 100:
                 new_configuration[0] = 100
             if configuration[0] <= 10:
@@ -190,9 +189,6 @@ def Translation(configuration, Processed_Flag, Map):
                 new_configuration[7] = 260
             if configuration[7] <= 100:
                 new_configuration[7] = 100
-
-
-
     return new_configuration
 
 # Data file update (recommendation [5 times] for each completion of a set of storage once)
@@ -203,6 +199,7 @@ def Data_file_update(XY, Processed_Flag, Map, timestruct):
     content = csv.writer(file1)
     for i in range(len(XY)):
         xy = Translation(XY[i], Processed_Flag, Map)
+
         content.writerow(xy)
     file1.close()
 
@@ -231,7 +228,7 @@ def output(timestruct):
 
 # Subject of the experiment, the parameters are as follows:
 # constraint of searches, number of recommendations (each time), initial sampling set size, system name
-def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, system = SYSTEM):
+def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, system = SYSTEM, CNF_flag = False):
 
 
     # Timestruct
@@ -254,7 +251,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
     # Test
     if system == 'Test':
-        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_Test_Recommended.csv", "a+",
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_Test" + WORKLOAD + "_Recommended.csv", "a+",
                      newline="")
         content = csv.writer(file1)
         content.writerow(
@@ -267,7 +264,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
     # x264
     if system == 'x264':
-        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_x264_Recommended.csv", "a+",
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_x264" + WORKLOAD + "_Recommended.csv", "a+",
                      newline="")
         content = csv.writer(file1)
         content.writerow(
@@ -281,7 +278,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
     # tomcat
     if system == 'tomcat':
-        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_tomcat_Recommended.csv", "a+",
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_tomcat" + WORKLOAD + "_Recommended.csv", "a+",
                      newline="")
         content = csv.writer(file1)
         content.writerow(
@@ -312,7 +309,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
     # sqlite
     if system == 'sqlite':
-        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_sqlite_Recommended.csv", "a+",
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_sqlite" + WORKLOAD + "_Recommended.csv", "a+",
                      newline="")
         content = csv.writer(file1)
         content.writerow(
@@ -332,7 +329,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
     # Hadoop
     if system == 'Hadoop':
-        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_Hadoop" + WORKLOAD + "_Recommended.csv", "a+",
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_Hadoop_Terasort" + WORKLOAD + "_Recommended.csv", "a+",
                      newline="")
         content = csv.writer(file1)
         content.writerow(
@@ -348,7 +345,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
     # apache
     if system == 'apache':
-        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_apache_Recommended.csv", "a+",
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_apache" + WORKLOAD + "_Recommended.csv", "a+",
                      newline="")
         content = csv.writer(file1)
         content.writerow(
@@ -360,7 +357,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
     # redis
     if system == 'redis':
-        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_redis_Recommended.csv", "a+",
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_redis" + WORKLOAD + "_Recommended.csv", "a+",
                      newline="")
         content = csv.writer(file1)
         content.writerow(
@@ -374,7 +371,7 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
     # cassandra
     if system == 'cassandra':
-        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_cassandra_Recommended.csv", "a+",
+        file1 = open(PATH + 'data/' + time.strftime('%Y%m%d%H%M%S', timestruct) + "_cassandra" + WORKLOAD + "_Recommended.csv", "a+",
                      newline="")
         content = csv.writer(file1)
         content.writerow(
@@ -405,6 +402,29 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
 
     #Sample
+    if CNF_flag:
+        threshold = np.mean(bound, axis=1)
+        k = len(bound)
+        try:
+            clauses = cnf.load_CNF(PATH+SYSTEM + '_CNF.txt')
+        except:
+            print('Existing internal constraint not found, random generation in progress:')
+            while 1:
+                clauses = [cnf.random_clause(k) for i in range(int(k/2))]
+                print('CNF: ', clauses, end = ', ')
+                model = {}
+                result = cnf.dpll(clauses.copy(), model)
+                print(result[0], end = '')
+                if result[0]:
+                    score = cnf.test_CNF(clauses, k)
+                    print(', ',score)
+                    if score < 0.15:
+                        continue
+                    else:
+                        cnf.save_CNF(PATH+SYSTEM + '_CNF.txt', clauses)
+                        break
+                print('\n')
+
     data = pd.Series.tolist(pd.read_csv(PATH + system + WORKLOAD + ".csv"))
     data, Processed_Flag, Map = Data_Preprocessing(np.array(data))
     XY = data[random.sample(list(range(len(data))), Initial_size)]
@@ -423,9 +443,12 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
         actds = CSAT(XY, bound = bound, int_flag = int_flag)
 
         #Re-Sample
-        print('Reference configuration (T = ', T, '\b): \n', np.max(actds.Y),
-              Translation(actds.X[np.argmax(actds.Y)], Processed_Flag, Map))
-        X = actds.X[np.argmax(actds.Y)]
+        print('Reference configuration (T = ', T, '\b): \n', round(np.max(actds.Y),2),
+              actds.X[np.argmax(actds.Y)])
+        if random.random()<0.05:
+            X = actds.X[random.randint(0, len(actds.Y)-1)]
+        else:
+            X = actds.X[np.argmax(actds.Y)]
         #Recommend
         Recommended_configuration = actds.Generator(X, size = np.min([Recommended_Number, Times_Constraint - T]))
         Recommended_configuration = ANFIS.Union(Recommended_configuration)
@@ -435,11 +458,26 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
 
         #Measure
         for i in range(len(Y)):
-            Y[i] = Measure(configuration = Translation(Recommended_configuration[i], Processed_Flag, Map), system = system)
-            print(Y[i],Translation(Recommended_configuration[i], Processed_Flag, Map))
+
+            flag = True
+            if CNF_flag:
+                model = dict()
+                for j in range(1, k + 1):
+                    if Recommended_configuration[i][j - 1] >= threshold[j - 1]:
+                        model[j] = True
+                    else:
+                        model[j] = False
+                flag = cnf.verification(clauses, model)
+            if flag:
+                Y[i] = Measure(configuration = Recommended_configuration[i], system = system)
+            else:
+                Y[i] = -1
+
+            print(Y[i],Recommended_configuration[i])
 
         #Data_expansion
         XY = np.append(XY, np.append(Recommended_configuration, Y, axis = 1), axis = 0)
+        XY = ANFIS.Union(XY)
         Data_file_update(np.append(Recommended_configuration, min_flag * Y, axis = 1), Processed_Flag, Map, timestruct)
 
     #Recommended configuration
@@ -447,27 +485,37 @@ def Test(Times_Constraint = 90, Recommended_Number = 5, Initial_size = 50, syste
     Recommended_configuration = actds.Generator(actds.X[np.argmax(actds.Y)], size = 10)
     Recommended_performance = np.zeros((len(Recommended_configuration), 1))
     for i in range(len(Recommended_performance)):
-        Recommended_performance[i] = Measure(configuration = Translation(Recommended_configuration[i], Processed_Flag, Map))
+        flag = True
+        if CNF_flag:
+            model = dict()
+            for j in range(1, k + 1):
+                if Recommended_configuration[i][j - 1] >= threshold[j - 1]:
+                    model[j] = True
+                else:
+                    model[j] = False
+            flag = cnf.verification(clauses, model)
+        if flag:
+            Recommended_performance[i] = Measure(configuration=Recommended_configuration[i], system=system)
+        else:
+            Recommended_performance[i] = -1
+
     Data_file_update(np.append(Recommended_configuration, min_flag * Recommended_performance, axis=1), Processed_Flag, Map, timestruct)
 
     output(timestruct)
+
 
 if __name__ == '__main__':
 
     # {100,200,300}*3
 
-    # Test Now
+    # sqlite Now
 
     for i in range(1,4):
         print('ours-100-', i, ':')
-        Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50)
+        Test(Times_Constraint=90, Recommended_Number=5, Initial_size=50, CNF_flag=True)
     for i in range(1,4):
         print('ours-200-', i, ':')
-        Test(Times_Constraint=190, Recommended_Number=5, Initial_size=100)
+        Test(Times_Constraint=190, Recommended_Number=7, Initial_size=100, CNF_flag=True)
     for i in range(1,4):
         print('ours-300-', i, ':')
-        Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150)
-
-    # Test
-    # configuration = [0, 200, 10, 1, 30, 1, 1, 2, 1, 2, 2, 50]
-    # print(Measure(configuration))
+        Test(Times_Constraint=290, Recommended_Number=10, Initial_size=150, CNF_flag=True)

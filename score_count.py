@@ -3,7 +3,7 @@ import numpy as np
 
 PATH = 'Hadoop/data/'
 Alg = 'ours'
-sys = 'Hadoop_Terasort'
+sys = 'Hadoop_Terasort_CNF'
 
 for j in range(1,4):
     log = np.zeros(3)

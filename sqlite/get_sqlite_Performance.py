@@ -7,7 +7,7 @@ import time
 
 def get_performance(params):
 
-    data = pd.read_csv("H:/FSE_2022_ACTDS/ACTDS2/sqlite/sqlite.csv")
+    data = pd.read_csv("sqlite/sqlite.csv")
     data_m = np.array(data)[:, 0:-1]
     params = np.array(params)
     try:

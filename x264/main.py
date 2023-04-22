@@ -3,8 +3,9 @@ import csv
 import random
 import pandas as pd
 import numpy as np
+import os
 
-PATH = "./x264/"
+PATH = "x264\\"
     #Location of software and video (the same path)
 
 class X264:
@@ -26,7 +27,6 @@ class X264:
             project += ('--' + config_name[i] + ' '+str(config[i])+' ')
 
         project += '-o '+ PATH + 'video2.mp4 ' + PATH + 'video1.mp4'
-
 
         res,out = subprocess.getstatusoutput(project)
         try:
@@ -80,4 +80,4 @@ class X264:
         data.to_csv(PATH + "x264.csv", index=0)
 
 if __name__ == "__main__":
-    X264.x264_data()
+    print(X264.getPerformance(1,  0,  1, 0,  1,  1,  1, 210,  1))

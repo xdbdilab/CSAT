@@ -3,7 +3,7 @@ import numpy as np
 
 def config_fix(configuration):
     new_configuration = np.copy(configuration)
-    data = pd.read_csv("H:/FSE_2022_ACTDS/ACTDS2/sqlite/sqlite.csv")
+    data = pd.read_csv("sqlite/sqlite.csv")
     data_a = np.array(data)
     data_m = np.array(data)[:, 0:-1]
     params = np.array(new_configuration[0:22])

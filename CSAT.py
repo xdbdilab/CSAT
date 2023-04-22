@@ -34,6 +34,7 @@ class CSAT:
         else:
             self.bound = np.array(bound)
 
+
         self.Lock_value_mask()
         self.anfis = ANFIS(XY)
         self.Perceive()
@@ -43,19 +44,33 @@ class CSAT:
         # Initial distribution number
         Initial_distribution_number = 0
         Dominance_distribution_number = 6
-        MR = np.zeros((np.min([self.X.shape[0], Initial_distribution_number]), self.X.shape[1]))
-        pos = list(range(len(self.XY)))
-        random.shuffle(pos)
-        for i in range(len(MR)):
-            MR[i] = self.anfis.x2MR(self.X[pos[i]])
+        XY = ANFIS.Union(self.XY)
+        temp = np.sort(-XY[:, -1])
+        negpos = np.where(temp < 0)[0]
+        try:
+            Dominance_distribution_number = min([Dominance_distribution_number, negpos[-1]])
+            Initial_distribution_number += 6-Dominance_distribution_number
+            MR = np.zeros((np.min([self.X.shape[0], Initial_distribution_number]), self.X.shape[1]))
+            pos = list(range(len(self.XY)))
+            random.shuffle(pos)
+            for i in range(len(MR)):
+                MR[i] = self.anfis.x2MR(self.X[pos[i]])
+            X = XY[np.argsort(-XY[:, -1])[0:min([Dominance_distribution_number, negpos[-1]])], 0:-1]
+            for i in range(len(X)):
+                MR = np.append(MR, [self.anfis.x2MR(X[i])], axis=0)
+        except:
+            Initial_distribution_number = 6
+            MR = np.zeros((np.min([self.X.shape[0], Initial_distribution_number]), self.X.shape[1]))
+            pos = list(range(len(self.XY)))
+            random.shuffle(pos)
+            for i in range(len(MR)):
+                MR[i] = self.anfis.x2MR(self.X[pos[i]])
+
         # MR[MR.shape[0]-1] = self.anfis.x2MR(self.X[np.argmax(self.Y)])
 
-        XY = ANFIS.Union(self.XY)
-        X = XY[np.argsort(-XY[:, -1])[0:Dominance_distribution_number], 0:-1]
-        for i in range(len(X)):
-            MR = np.append(MR, [self.anfis.x2MR(X[i])], axis = 0)
+        # self.anfis.MR = self.anfis.Update_MR(MR)
+        self.anfis.MR = MR
 
-        self.anfis.MR = self.anfis.Update_MR(MR)
 
         self.anfis.ANFIS(Train_index=np.array(range(len(self.XY))), epoch=50)
         self.X_p = self.anfis.Perceive(self.X).transpose()
@@ -63,11 +78,10 @@ class CSAT:
     def Lock_value_mask(self):
         self.mask = np.ones(self.X.shape[1])*-233
         b = []
-        for i in range(len(self.mask)):
-            if len(np.unique(self.X[:, i])) == 1:
-                self.mask[i] = self.X[0, i]
-                b.append(i)
-
+        # for i in range(len(self.mask)):
+        #     if len(np.unique(self.X[:, i])) == 1:
+        #         self.mask[i] = self.X[0, i]
+        #         b.append(i)
 
         self.X = np.delete(self.X, b, axis = 1)
         self.XY = np.delete(self.XY, b, axis = 1)
@@ -164,7 +178,7 @@ class CSAT:
         Variable_space_size = np.sqrt(m) / np.math.factorial(m - 1)
         Accumulative_value = 0
 
-        for i in range(50):
+        for i in range(5*n):
             o = self.Sum2one(m)
             Accumulative_value += self.Compare_1_o(o, o_B) * Variable_space_size
         Full_P = Accumulative_value / (i + 1)
@@ -197,6 +211,8 @@ class CSAT:
         mu, sigma = np.zeros(m), np.zeros(m)
         for k in range(m):
             mu[k], sigma[k] = self.Gaussian_equation_solving(P_0[k], P_1[k])
+            if mu[k] < 0:
+                mu[k] = 0.001
 
         self.G_p = [mu, sigma]
 
@@ -297,17 +313,20 @@ class CSAT:
         if sigma2 < 0:
             sigma2 = np.exp(float(sigma2))
 
-        return float(mu), np.sqrt(float(sigma2))
+        return float(mu) +0.1*(random.random()-0.5), np.sqrt(float(sigma2))
+
+
 class ANFIS:
 
     def __init__(self, XY, *MR, seed=int(time())):
-        np.random.seed(seed)
-        random.seed(seed)
+        # np.random.seed(seed)
+        # random.seed(seed)
         if len(MR) > 0:
             self.MR = np.array(MR[0])
         else:
             self.MR = np.array([])
         self.XY = np.array(XY)
+
         self.Setup()
 
     def Setup(self):
@@ -315,9 +334,9 @@ class ANFIS:
         self.Y = self.XY[:, -1]
 
         Invalid_Data_Index = []
-        for i in range(self.X.shape[1]):
-            if len(np.unique(self.X[:, i])) == 1:
-                Invalid_Data_Index.append(i)
+        # for i in range(self.X.shape[1]):
+        #     if len(np.unique(self.X[:, i])) == 1:
+        #         Invalid_Data_Index.append(i)
         self.X = np.delete(self.X, Invalid_Data_Index, axis=1)
 
         self.MeanShift()
@@ -565,7 +584,8 @@ class ANFIS:
             self.mf.append(MF())
             for j in range(len(self.CluRe.C[i])):
                 type = 'gaussmf'
-                config = [np.sqrt((self.CluRe.C[i][1] - self.CluRe.C[i][0])/0.01) / np.abs(CC[i]), self.CluRe.C[i][j]]
+                # config = [np.sqrt((self.CluRe.C[i][1] - self.CluRe.C[i][0])/0.01) / np.abs(CC[i]), self.CluRe.C[i][j]]
+                config = [0.01, self.CluRe.C[i][j]]
                 self.mf[i].append(MUFUN(type, config))
 
     @classmethod
