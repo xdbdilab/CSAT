@@ -12,6 +12,7 @@ Many modern software systems provide numerous configuration options that users c
 - scipy 1.7.1
 - matplotlib 3.1.0
 - sympy 1.9
+- requests 2.28.2
 
 # Installation
 CSAT can be directly executed through source code:
